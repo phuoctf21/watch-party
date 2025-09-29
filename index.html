@@ -1,31 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>🎬 Watch Party</title>
+  <title>🎬 Watch Party - All Features</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
-  <div class="container">
-    <div class="video-section">
-      <div id="player"></div>
-      <div class="controls">
-        <button id="play">▶ Play</button>
-        <button id="pause">⏸ Pause</button>
+  <div id="app">
+    <aside class="left-panel">
+      <div class="brand">
+        <h1>Watch Party</h1>
+        <button id="toggleTheme">🌙</button>
       </div>
-      <div id="info"></div>
-    </div>
-    <div class="chat-section">
-      <h2>💬 Chat</h2>
-      <ul id="messages"></ul>
-      <form id="chatForm">
-        <input id="chatInput" autocomplete="off" placeholder="Nhập tin nhắn..." />
-        <button>Gửi</button>
-      </form>
-    </div>
+
+      <div class="user-setup" id="userSetup">
+        <input id="nickInput" placeholder="Nhập nickname..." />
+        <input id="roomInput" placeholder="Tên phòng (ví dụ: phim-friends)" />
+        <button id="joinBtn">Join Room</button>
+      </div>
+
+      <div class="room-info" id="roomArea" style="display:none;">
+        <h3>Phòng: <span id="roomName">main</span></h3>
+        <div class="users">
+          <h4>Người xem</h4>
+          <ul id="userList"></ul>
+        </div>
+
+        <div class="playlist">
+          <h4>Playlist</h4>
+          <ul id="playlist"></ul>
+          <div class="add-video">
+            <input id="videoUrl" placeholder="Link YouTube hoặc ID" />
+            <input id="videoTitle" placeholder="Tiêu đề (tùy chọn)" />
+            <button id="addVideoBtn">Thêm vào queue</button>
+            <button id="nextBtn">▶ Next</button>
+            <button id="voteSkipBtn">🗳 Vote skip</button>
+          </div>
+        </div>
+
+        <div class="polls">
+          <h4>Poll</h4>
+          <input id="pollQuestion" placeholder="Câu hỏi poll" />
+          <input id="pollOptions" placeholder="Tùy chọn (phân cách bằng ; )" />
+          <button id="createPollBtn">Tạo poll</button>
+          <div id="pollsArea"></div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <section class="video-section">
+        <div id="player"></div>
+
+        <div class="controls">
+          <button id="play">▶ Play</button>
+          <button id="pause">⏸ Pause</button>
+          <button id="seekBack"><< 10s</button>
+          <button id="seekFwd">10s >></button>
+          <div class="current-info" id="info">Không có video</div>
+        </div>
+
+        <div class="overlay-reactions" id="overlayReactions"></div>
+
+        <div class="video-actions">
+          <input id="changeUrl" placeholder="Đổi video - paste link hoặc ID" />
+          <button id="changeBtn">Đổi video</button>
+        </div>
+
+      </section>
+
+      <aside class="chat-section">
+        <h2>💬 Chat</h2>
+        <ul id="messages"></ul>
+
+        <div class="reaction-bar">
+          <button class="reactBtn" data-react="👍">👍</button>
+          <button class="reactBtn" data-react="😂">😂</button>
+          <button class="reactBtn" data-react="🔥">🔥</button>
+          <button class="reactBtn" data-react="😢">😢</button>
+        </div>
+
+        <form id="chatForm">
+          <input id="chatInput" autocomplete="off" placeholder="Nhập tin nhắn..." />
+          <button>Gửi</button>
+        </form>
+      </aside>
+    </main>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
