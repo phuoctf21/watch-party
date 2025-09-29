@@ -1,103 +1,81 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  background: linear-gradient(120deg, #4facfe, #00f2fe);
-  color: #fff;
+:root{
+  --bg1: linear-gradient(120deg,#4facfe,#00f2fe);
+  --panel-bg: rgba(255,255,255,0.06);
+  --accent: #ff6f61;
+  --text: #fff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: Inter, system-ui, Arial;
+  color:var(--text);
+  background:var(--bg1);
+  height:100vh;
+}
+#app{display:flex;height:100vh;}
+
+/* Left panel */
+.left-panel{
+  width:320px;
+  padding:16px;
+  background:rgba(0,0,0,0.18);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  overflow:auto;
+}
+.brand{display:flex;justify-content:space-between;align-items:center}
+.brand h1{margin:0;font-size:18px}
+.brand button{background:transparent;border:1px solid rgba(255,255,255,0.12);padding:6px;border-radius:8px;color:var(--text);cursor:pointer}
+
+.user-setup input, .playlist input, .polls input{width:100%;padding:8px;margin-bottom:6px;border-radius:8px;border:none}
+.user-setup button, .add-video button, .polls button{width:100%;padding:10px;border-radius:8px;border:none;background:var(--accent);color:#fff;cursor:pointer;margin-bottom:6px}
+
+.room-info h3{margin:0 0 8px 0}
+.users ul, .playlist ul, #messages, #pollsArea{list-style:none;padding:0;margin:0}
+.users li, .playlist li{padding:6px;border-radius:6px;margin-bottom:6px;background:rgba(255,255,255,0.04)}
+.playlist .add-video{display:flex;gap:6px;flex-direction:column}
+.playlist .add-video input{width:100%}
+
+/* Main panel */
+.main-panel{flex:1;display:flex;flex-direction:row;gap:12px;padding:16px}
+.video-section{flex:2;display:flex;flex-direction:column;gap:12px}
+#player{width:100%;height:60vh;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.25);background:#000}
+.controls{display:flex;gap:8px;align-items:center}
+.controls button{padding:8px 12px;border-radius:8px;border:none;background:#fff;color:#333;font-weight:600;cursor:pointer}
+.current-info{margin-left:12px;font-size:14px;color:rgba(255,255,255,0.9)}
+
+/* Chat */
+.chat-section{width:360px;background:rgba(0,0,0,0.25);padding:12px;border-radius:10px;display:flex;flex-direction:column}
+.chat-section h2{margin:0 0 8px 0}
+#messages{flex:1;overflow:auto;margin-bottom:8px}
+#messages li{margin-bottom:6px;padding:8px;border-radius:8px;background:rgba(255,255,255,0.03)}
+#chatForm{display:flex;gap:8px}
+#chatInput{flex:1;padding:10px;border-radius:8px;border:none}
+#chatForm button{padding:10px 12px;border:none;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer}
+
+.reaction-bar{display:flex;gap:6px;margin-bottom:8px}
+.reaction-bar button{padding:6px 8px;border-radius:8px;border:none;background:rgba(255,255,255,0.06);cursor:pointer}
+
+/* overlay reactions */
+.overlay-reactions{position:relative;height:0;pointer-events:none}
+.overlay-reactions .react{
+  position:absolute;
+  top:20%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  font-size:36px;
+  animation: floatUp 2s ease-out forwards;
+}
+@keyframes floatUp{
+  0%{opacity:1;transform:translate(-50%,0) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-180px) scale(1.6)}
 }
 
-.container {
-  display: flex;
-  height: 100vh;
-}
-
-.video-section {
-  flex: 3;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-#player {
-  width: 100%;
-  height: 60vh;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-
-.controls {
-  margin-top: 10px;
-}
-
-.controls button {
-  padding: 10px 20px;
-  margin-right: 10px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  background: #fff;
-  color: #333;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.controls button:hover {
-  background: #ff6f61;
-  color: #fff;
-}
-
-#info {
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-.chat-section {
-  flex: 1;
-  background: rgba(0,0,0,0.3);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.chat-section h2 {
-  margin: 0 0 10px 0;
-  text-align: center;
-}
-
-#messages {
-  list-style: none;
-  padding: 0;
-  flex: 1;
-  overflow-y: auto;
-  margin-bottom: 10px;
-}
-
-#messages li {
-  padding: 5px 10px;
-  margin: 5px 0;
-  background: rgba(255,255,255,0.1);
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-#chatForm {
-  display: flex;
-}
-
-#chatInput {
-  flex: 1;
-  padding: 10px;
-  border-radius: 6px 0 0 6px;
-  border: none;
-}
-
-#chatForm button {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 0 6px 6px 0;
-  background: #ff6f61;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
+/* responsive */
+@media (max-width:900px){
+  .left-panel{display:none}
+  .chat-section{width:100%;height:40vh;position:fixed;bottom:0;left:0;right:0}
+  .main-panel{flex-direction:column;padding:8px}
+  #player{height:45vh}
 }
