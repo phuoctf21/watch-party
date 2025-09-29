@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>🎬 Watch Party</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="video-section">
+      <div id="player"></div>
+      <div class="controls">
+        <button id="play">▶ Play</button>
+        <button id="pause">⏸ Pause</button>
+      </div>
+      <div id="info"></div>
+    </div>
+    <div class="chat-section">
+      <h2>💬 Chat</h2>
+      <ul id="messages"></ul>
+      <form id="chatForm">
+        <input id="chatInput" autocomplete="off" placeholder="Nhập tin nhắn..." />
+        <button>Gửi</button>
+      </form>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

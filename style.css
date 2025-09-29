@@ -1,0 +1,103 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: linear-gradient(120deg, #4facfe, #00f2fe);
+  color: #fff;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.video-section {
+  flex: 3;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#player {
+  width: 100%;
+  height: 60vh;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.controls {
+  margin-top: 10px;
+}
+
+.controls button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fff;
+  color: #333;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.controls button:hover {
+  background: #ff6f61;
+  color: #fff;
+}
+
+#info {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.chat-section {
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-section h2 {
+  margin: 0 0 10px 0;
+  text-align: center;
+}
+
+#messages {
+  list-style: none;
+  padding: 0;
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+#messages li {
+  padding: 5px 10px;
+  margin: 5px 0;
+  background: rgba(255,255,255,0.1);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+#chatForm {
+  display: flex;
+}
+
+#chatInput {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px 0 0 6px;
+  border: none;
+}
+
+#chatForm button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0 6px 6px 0;
+  background: #ff6f61;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
