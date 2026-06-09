@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Học 574 Từ Vựng TOEIC Master</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --success-color: #16a34a;
+            --danger-color: #dc2626;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .stats-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .controls-container {
+            max-width: 1000px;
+            margin: 0 auto 20px auto;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-color);
+        }
+
+        .selector-box select {
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .mode-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 5px;
+        }
+
+        .btn-mode { background-color: #e2e8f0; color: var(--text-color); }
+        .btn-mode.active { background-color: var(--primary-color); color: white; }
+
+        .main-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Flashcard Styles */
+        .flashcard-wrapper {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .flashcard {
+            width: 380px;
+            height: 240px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1);
+            border-radius: 15px;
+        }
+
+        .flashcard.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .card-front { background-color: white; color: #1e3a8a; }
+        .card-back { background-color: #eff6ff; color: var(--text-color); transform: rotateY(180deg); }
+        .card-vocab { font-size: 26px; font-weight: bold; margin-bottom: 10px; color: #b91c1c; }
+        .card-ipa { font-size: 18px; color: #64748b; font-style: italic; }
+        .card-meaning { font-size: 22px; font-weight: bold; color: var(--success-color); }
+
+        .card-nav {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .card-nav button {
+            padding: 10px 25px;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Quiz Styles */
+        .quiz-wrapper {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .quiz-question { font-size: 22px; font-weight: bold; margin-bottom: 20px; color: #1e3a8a; }
+        .quiz-options { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 20px; }
+        @media(min-width: 600px) { .quiz-options { grid-template-columns: 1fr 1fr; } }
+
+        .option-btn {
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .option-btn:hover:not([disabled]) { border-color: var(--primary-color); background-color: #f0fdf4; }
+        .option-btn.correct { background-color: #bbf7d0 !important; border-color: var(--success-color) !important; color: #16a34a; font-weight: bold; }
+        .option-btn.wrong { background-color: #fca5a5 !important; border-color: var(--danger-color) !important; color: #b91c1c; }
+
+        /* List View Styles */
+        .part-section { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 1px 3px rgb(0 0 0 / 0.1); }
+        .part-header { font-size: 18px; font-weight: bold; color: #1e3a8a; border-bottom: 2px solid #eff6ff; padding-bottom: 10px; margin-bottom: 15px; }
+        
+        .vocab-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .vocab-table th, .vocab-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; }
+        .vocab-table th { background-color: #f8fafc; color: #64748b; font-weight: 600; }
+        .vocab-table tr:hover { background-color: #faf5ff; }
+        .td-word { font-weight: bold; color: #2563eb; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>TOEIC VOCABULARY मास्टर</h1>
+        <div class="stats-badge">Tổng số lượng: <span id="total-count">574</span> từ vựng hoàn chỉnh</div>
+    </header>
+
+    <div class="controls-container">
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Tìm nhanh từ vựng hoặc nghĩa..." oninput="filterVocabulary()">
+        </div>
+        
+        <div class="selector-box">
+            <select id="part-selector" onchange="changePart()">
+                <option value="all">Tất cả các Phần (574 từ)</option>
+                <option value="p1">TEST 3 - Part 6, 7 (Trang 123-125)</option>
+                <option value="p2">TEST 4 - Part 3, 4 (Trang 157-159)</option>
+                <option value="p3">TEST 4 - Part 5 (Trang 167-169)</option>
+                <option value="p4">TEST 4 - Part 6, 7 (Trang 174-177)</option>
+                <option value="p5">TEST 5 - Part 1, 2 (Trang 203-204)</option>
+                <option value="p6">TEST 5 - Part 3, 4 (Trang 204-206)</option>
+                <option value="p7">TEST 5 - Part 5 (Trang 218-220)</option>
+                <option value="p8">TEST 5 - Part 6, 7 (Trang 225-227)</option>
+                <option value="p9">TEST 6 - Part 3, 4 (Trang 259-261)</option>
+                <option value="p10">TEST 6 - Part 5 (Trang 269-271) +Mới</option>
+                <option value="p11">TEST 6 - Part 6, 7 (Trang 276-278) +Mới</option>
+            </select>
+        </div>
+
+        <div class="mode-buttons">
+            <button class="btn-mode active" id="btn-list" onclick="setViewMode('list')">Danh sách</button>
+            <button class="btn-mode" id="btn-card" onclick="setViewMode('card')">Flashcard</button>
+            <button class="btn-mode" id="btn-quiz" onclick="setViewMode('quiz')">Trắc nghiệm</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="list-container"></div>
+
+        <div id="card-container" class="flashcard-wrapper">
+            <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="card-inner">
+                    <div class="card-front">
+                        <div class="card-vocab" id="fc-word">Word</div>
+                        <div class="card-ipa" id="fc-ipa">/ipa/</div>
+                        <div style="margin-top: 15px; color: #94a3b8; font-size: 12px;">Nhấp để xem nghĩa</div>
+                    </div>
+                    <div class="card-back">
+                        <div class="card-meaning" id="fc-meaning">Nghĩa của từ</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-nav">
+                <button onclick="moveCard(-1)">Trước</button>
+                <span id="card-index">1 / 574</span>
+                <button onclick="moveCard(1)">Sau</button>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="quiz-wrapper">
+            <div class="quiz-question" id="q-text">Đang tải câu hỏi...</div>
+            <div class="quiz-options" id="q-options"></div>
+            <div class="card-nav" style="margin-top: 10px; justify-content: flex-end;">
+                <button id="next-quiz-btn" onclick="generateQuiz()" style="background-color: #475569;">Câu tiếp theo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const dataset = {
+            p1: {
+                title: "TEST 3 - Part 6, 7 (Trang 123-125)",
+                words: [
+                    { stt: 1, word: "Human resources", ipa: "/ˌhjuːmən rɪˈsɔːrsɪz/", meaning: "Nhân sự" },
+                    { stt: 2, word: "Nearly", ipa: "/ˈnɪrli/", meaning: "Gần như" },
+                    { stt: 3, word: "Retire (retire from)", ipa: "/rɪˈtaɪər/", meaning: "Nghỉ hưu" },
+                    { stt: 4, word: "Senior", ipa: "/ˈsiːniər/", meaning: "Cấp cao" },
+                    { stt: 5, word: "Replace", ipa: "/rɪˈpleɪs/", meaning: "Thay thế" },
+                    { stt: 6, word: "Strategy", ipa: "/ˈstrætədʒi/", meaning: "Chiến lược" },
+                    { stt: 7, word: "Practice", ipa: "/ˈpræktɪs/", meaning: "Sự luyện tập" },
+                    { stt: 8, word: "Mentor", ipa: "/ˈmentɔːr/", meaning: "Cố vấn" },
+                    { stt: 9, word: "Last", ipa: "/læst/", meaning: "Cuối cùng, kéo dài" },
+                    { stt: 10, word: "Original", ipa: "/əˈrɪdʒənl/", meaning: "Ban đầu" },
+                    { stt: 11, word: "Flexible", ipa: "/ˈfleksəbl/", meaning: "Linh hoạt" },
+                    { stt: 12, word: "Alternate", ipa: "/ˈɔːltərnət/", meaning: "Luân phiên, xen kẽ" },
+                    { stt: 13, word: "real estate", ipa: "/ˈriːəl ɪsteɪt/", meaning: "Bất động sản" },
+                    { stt: 14, word: "Award", ipa: "/əˈwɔːrd/", meaning: "Giải thưởng" },
+                    { stt: 15, word: "Transportation", ipa: "/ˌtrænspərˈteɪʃn/", meaning: "Phương tiện giao thông" },
+                    { stt: 16, word: "Enhance", ipa: "/ɪnˈhæns/", meaning: "Nâng cao, tăng cường" },
+                    { stt: 17, word: "Reside", ipa: "/rɪˈzaɪd/", meaning: "Cư trú" },
+                    { stt: 18, word: "Guide (guidance)", ipa: "/ɡaɪd/", meaning: "Hướng dẫn, người hướng dẫn, sự hướng dẫn" },
+                    { stt: 19, word: "Negotiate", ipa: "/nɪˈɡoʊʃieɪt/", meaning: "Thương lượng" },
+                    { stt: 20, word: "Agent", ipa: "/ˈeɪdʒənt/", meaning: "Nhân viên, người đại diện" },
+                    { stt: 21, word: "Specialize in", ipa: "/ˈspeʃəlaɪz/", meaning: "Chuyên về" },
+                    { stt: 22, word: "Elementary (elementary school)", ipa: "/ˌelɪˈmentri/", meaning: "Cơ bản, sơ cấp, trường tiểu học" },
+                    { stt: 23, word: "Therefore", ipa: "/ˈðerfɔːr/", meaning: "Vì vậy, do đó" },
+                    { stt: 24, word: "Toward", ipa: "/tɔːrdz/", meaning: "Hướng về" },
+                    { stt: 25, word: "Series (a series of)", ipa: "/ˈsɪriːz/", meaning: "Loạt, chuỗi, một loạt" },
+                    { stt: 26, word: "fill out", ipa: "/fɪl aʊt/", meaning: "Điền vào" },
+                    { stt: 27, word: "Appointment", ipa: "/əˈpɔɪntmənt/", meaning: "Cuộc hẹn, sự bổ nhiệm" },
+                    { stt: 28, word: "Response (in response to)", ipa: "/rɪˈspɑːns/", meaning: "Sự trả lời, phản hồi, để đáp lại" },
+                    { stt: 29, word: "Supplemental", ipa: "/ˌsʌplɪˈmentri/", meaning: "Bổ sung" },
+                    { stt: 30, word: "Consult", ipa: "/kənˈsʌlt/", meaning: "Tham khảo ý kiến" },
+                    { stt: 31, word: "Prescribe", ipa: "/prɪˈskraɪb/", meaning: "Kê đơn" },
+                    { stt: 32, word: "Attachment", ipa: "/əˈtætʃmənt/", meaning: "Tập tin đính kèm" },
+                    { stt: 33, word: "Article", ipa: "/ˈɑːrtɪkl/", meaning: "Bài báo" },
+                    { stt: 34, word: "Particularly", ipa: "/pərˈtɪkjələrli/", meaning: "Một cách đặc biệt" },
+                    { stt: 35, word: "Aspect", ipa: "/ˈæspekt/", meaning: "Khía cạnh" },
+                    { stt: 36, word: "Affect (effect)", ipa: "/əˈfekt/", meaning: "Làm ảnh hưởng, kết quả, hiệu quả" },
+                    { stt: 37, word: "Mission", ipa: "/ˈmɪʃn/", meaning: "Sứ mệnh" },
+                    { stt: 38, word: "Currently", ipa: "/ˈkɜːrəntli/", meaning: "Hiện tại" },
+                    { stt: 39, word: "Vending machine", ipa: "/ˈvendɪŋ məʃiːn/", meaning: "Máy bán hàng tự động" },
+                    { stt: 40, word: "Hall", ipa: "/hɔːl/", meaning: "Hội trường" },
+                    { stt: 41, word: "Stock", ipa: "/stɑːk/", meaning: "Tích trữ, Trữ hàng, Cổ phiếu" },
+                    { stt: 42, word: "soft drink", ipa: "/ˌsɔːft ˈdrɪŋk/", meaning: "Nước có ga" },
+                    { stt: 43, word: "Beverage", ipa: "/ˈbevərɪdʒ/", meaning: "Thức uống" },
+                    { stt: 44, word: "Commitment", ipa: "/kəˈmɪtmənt/", meaning: "Sự cam kết" },
+                    { stt: 45, word: "Wellness", ipa: "/ˈwelnəs/", meaning: "Sự khỏe mạnh" },
+                    { stt: 46, word: "Improve", ipa: "/ɪnˈfruːv/", meaning: "Cải thiện" },
+                    { stt: 47, word: "Hospitality", ipa: "/ˌhɑːspɪˈtæləti/", meaning: "Lòng hiếu khách" },
+                    { stt: 48, word: "cost-effective", ipa: "/ˌkɔːst ɪˈfektɪv/", meaning: "Tiết kiệm chi phí" },
+                    { stt: 49, word: "Consider", ipa: "/kənˈsɪdər/", meaning: "Cân nhắc, xem xét" },
+                    { stt: 50, word: "Suggestion", ipa: "/səˈdʒestʃən/", meaning: "Sự đề xuất" },
+                    { stt: 51, word: "Session", ipa: "/ˈseʃn/", meaning: "Buổi, phiên họp" },
+                    { stt: 52, word: "by the way", ipa: "/baɪ ðə weɪ/", meaning: "Nhân tiện" },
+                    { stt: 53, word: "in the meantime", ipa: "/ɪn ðə ˈmiːntaɪm/", meaning: "Trong lúc đó" },
+                    { stt: 54, word: "on the other hand", ipa: "/ɑːn ði ˈʌðər hænd/", meaning: "Mặt khác" },
+                    { stt: 55, word: "Eventful", ipa: "/ɪˈventfl/", meaning: "Có nhiều sự kiện quan trọng" },
+                    { stt: 56, word: "Profit (profitable)", ipa: "/ˈpɑːfɪt/", meaning: "Lợi nhuận, có lời, có lãi" },
+                    { stt: 57, word: "Comfort (comfortable)", ipa: "/ˈkʌmfərt/", meaning: "Sự an ủi, thoải mái" },
+                    { stt: 58, word: "Advertisement", ipa: "/ˌædvərˈtaɪzmənt/", meaning: "Quảng cáo" },
+                    { stt: 59, word: "Discontinue", ipa: "/ˌdɪskənˈtɪnjuː/", meaning: "Dừng việc gì" },
+                    { stt: 60, word: "specialize in", ipa: "/ˈspeʃəlaɪz ɪn/", meaning: "Chuyên về" },
+                    { stt: 61, word: "Athletic (athletic footwear)", ipa: "/æθˈletɪk/", meaning: "Khỏe mạnh, giày thể thao" },
+                    { stt: 62, word: "Medical (medical center)", ipa: "/ˈmedɪkl/", meaning: "Y tế, trung tâm y tế" },
+                    { stt: 63, word: "Register", ipa: "/ˈredʒɪstər/", meaning: "Đăng ký" },
+                    { stt: 64, word: "Schedule", ipa: "/ˈskedʒuːl/", meaning: "Lên lịch trình, lịch trình" },
+                    { stt: 65, word: "Inform (notify)", ipa: "/ɪnˈfɔːrm/", meaning: "Thông báo" },
+                    { stt: 66, word: "Colleague (co-worker)", ipa: "/ˈkɑːliːɡ/", meaning: "Đồng nghiệp" },
+                    { stt: 67, word: "Absence", ipa: "/ˈæbsəns/", meaning: "Sự vắng mặt" },
+                    { stt: 68, word: "Simple (simplify)", ipa: "/ˈsɪmpl/", meaning: "Đơn giản, đơn giản hóa" },
+                    { stt: 69, word: "Process (processing time)", ipa: "/ˈprɑːses/", meaning: "Xử lý, quy trình, thời gian xử lý" },
+                    { stt: 70, word: "Reduce (decrease)", ipa: "/rɪˈduːs/", meaning: "Giảm" },
+                    { stt: 71, word: "a variety of", ipa: "/vəˈraɪəti/", meaning: "Nhiều, đa dạng" },
+                    { stt: 72, word: "office supply", ipa: "/ˈɑːfɪs səˈplaɪ/", meaning: "Văn phòng phẩm" },
+                    { stt: 73, word: "Revise", ipa: "/rɪˈvaɪz/", meaning: "Chỉnh sửa" },
+                    { stt: 74, word: "Proposal", ipa: "/prəˈpoʊzl/", meaning: "Sự đề xuất" },
+                    { stt: 75, word: "Distraction", ipa: "/dɪˈstrækʃn/", meaning: "Sự sao lãng" }
+                ]
+            },
+            p2: {
+                title: "TEST 4 - Part 3, 4 (Trang 157-159)",
+                words: [
+                    { stt: 1, word: "authority (n)", ipa: "/əˈθɔːrəti/", meaning: "thẩm quyền" },
+                    { stt: 2, word: "suspend (v)", ipa: "/səˈspend/", meaning: "đình chỉ" },
+                    { stt: 3, word: "marine (n)", ipa: "/məˈriːn/", meaning: "hàng hải" },
+                    { stt: 4, word: "ferry (n)", ipa: "/ˈferi/", meaning: "phà" },
+                    { stt: 5, word: "storm (n)", ipa: "/stɔːrm/", meaning: "cơn bão" },
+                    { stt: 6, word: "grab (v)", ipa: "/ɡræb/", meaning: "bắt lấy" },
+                    { stt: 7, word: "recommend (v)", ipa: "/ˌrekəˈmend/", meaning: "đề xuất" },
+                    { stt: 8, word: "emphasize (v)", ipa: "/ˈemfəsaɪz/", meaning: "nhấn mạnh" },
+                    { stt: 9, word: "deposit (v)", ipa: "/dɪˈpɑːzɪt/", meaning: "đặt cọc" },
+                    { stt: 10, word: "tool (specialized tool)", ipa: "/tuːl/", meaning: "công cụ, công cụ chuyên dụng" },
+                    { stt: 11, word: "park (community park)", ipa: "/pɑːrk/", meaning: "công viên, công viên cộng đồng" },
+                    { stt: 12, word: "author (n)", ipa: "/ˈɔːθər/", meaning: "tác giả" },
+                    { stt: 13, word: "form (fill out a form)", ipa: "/fɔːrm/", meaning: "đơn, điền vào tờ đơn" },
+                    { stt: 14, word: "place (place an order)", ipa: "/pleɪs/", meaning: "đặt, đặt đơn hàng" },
+                    { stt: 15, word: "price quote", ipa: "", meaning: "báo giá" },
+                    { stt: 16, word: "move (a moving company)", ipa: "/muːv/", meaning: "chuyển, công ty chuyển nhà" },
+                    { stt: 17, word: "cater (catering service)", ipa: "/ˈkeɪtər/", meaning: "phục vụ đồ ăn uống, dịch vụ ăn uống" },
+                    { stt: 18, word: "specific (specific direction)", ipa: "/spəˈsɪfɪk/", meaning: "cụ thể, chỉ dẫn cụ thể" },
+                    { stt: 19, word: "lease (leasing office)", ipa: "/liːs/", meaning: "thuê, văn phòng cho thuê" },
+                    { stt: 20, word: "unit (large units available to rent)", ipa: "/ˈjuːnɪt/", meaning: "căn hộ đơn, căn hộ có sẵn cho thuê" },
+                    { stt: 21, word: "afford (can afford to)", ipa: "/əˈfɔːrd/", meaning: "có khả năng chi trả" },
+                    { stt: 22, word: "tenant (n)", ipa: "/ˈtenənt/", meaning: "người thuê" },
+                    { stt: 23, word: "power company", ipa: "/ˈpaʊər/", meaning: "công ty điện" },
+                    { stt: 24, word: "on-site", ipa: "", meaning: "tại cơ sở" },
+                    { stt: 25, word: "cybersecurity firm", ipa: "/ˈsaɪbərsɪk jʊərəti fɜːrm/", meaning: "công ty an ninh mạng" },
+                    { stt: 26, word: "utility company", ipa: "/juːˈtɪləti/", meaning: "công ty dịch vụ gas, điện, nước" },
+                    { stt: 27, word: "archaeologist", ipa: "/ˌɑːrkiˈɑːlədʒɪst/", meaning: "nhà khảo cổ" },
+                    { stt: 28, word: "dig site", ipa: "/dɪɡ saɪt/", meaning: "địa điểm đào" },
+                    { stt: 29, word: "capture (v)", ipa: "/ˈkæptʃər/", meaning: "bắt được; chiếm lấy" },
+                    { stt: 30, word: "pottery (n)", ipa: "/ˈpɑːtəri/", meaning: "gốm" },
+                    { stt: 31, word: "excavation (n)", ipa: "/ˌekskəˈveɪʃn/", meaning: "bới lên, moi lên" },
+                    { stt: 32, word: "reach (v)", ipa: "/riːtʃ/", meaning: "đến; đạt được; với" },
+                    { stt: 33, word: "electrical outage", ipa: "/ɪˈlektrɪkl ˈaʊtɪdʒ/", meaning: "cúp điện" },
+                    { stt: 34, word: "assure that", ipa: "/əˈʃʊr/", meaning: "đảm bảo rằng" },
+                    { stt: 35, word: "restore (v)", ipa: "/rɪˈstɔːr/", meaning: "khôi phục" },
+                    { stt: 36, word: "sluggish (a)", ipa: "/ˈslʌɡɪʃ/", meaning: "chậm chạp" },
+                    { stt: 37, word: "accelerate (v)", ipa: "/əkˈseləreɪt/", meaning: "tăng tốc" },
+                    { stt: 38, word: "vary (v)", ipa: "/ˈværi/", meaning: "khác" },
+                    { stt: 39, word: "clog (v)", ipa: "/klɑːɡ/", meaning: "chặn" },
+                    { stt: 40, word: "inexpensive (a)", ipa: "/ˌɪnekˈspensɪv/", meaning: "không tốn nhiều tiền" },
+                    { stt: 41, word: "parade (n)", ipa: "/pəˈreɪd/", meaning: "diễu hành" },
+                    { stt: 42, word: "grant (v)", ipa: "/ɡrænt/", meaning: "đáp ứng; cấp cho" },
+                    { stt: 43, word: "dealership (n)", ipa: "/ˈdiːlərʃɪp/", meaning: "đại lý" },
+                    { stt: 44, word: "boutique (n)", ipa: "/buːˈtiːk/", meaning: "cửa hàng" },
+                    { stt: 45, word: "nutritional (a)", ipa: "/nuˈtrɪʃənl/", meaning: "về dinh dưỡng" },
+                    { stt: 46, word: "nuanced (a)", ipa: "/ˈnuːɑːnst/", meaning: "nhiều sắc thái" },
+                    { stt: 47, word: "serving (n)", ipa: "/ˈsɜːrvɪŋ/", meaning: "khẩu phần" },
+                    { stt: 48, word: "weight loss", ipa: "/weɪt lɔːs/", meaning: "giảm cân" },
+                    { stt: 49, word: "wander (v)", ipa: "/ˈwɑːndər/", meaning: "đi bộ, đi lang thang" },
+                    { stt: 50, word: "sponsor (n) (v)", ipa: "/ˈspɑːnsər/", meaning: "tài trợ" },
+                    { stt: 51, word: "beverage (n)", ipa: "/ˈbevərɪdʒ/", meaning: "nước giải khát" },
+                    { stt: 52, word: "wonder (v)", ipa: "/ˈwʌndər/", meaning: "tự hỏi" }
+                ]
+            },
+            p3: {
+                title: "TEST 4 - Part 5 (Trang 167-169)",
+                words: [
+                    { stt: 1, word: "Since", ipa: "/sɪns/", meaning: "kể từ, bởi vì" },
+                    { stt: 2, word: "revision (n)", ipa: "/rɪˈvɪʒn/", meaning: "sự chỉnh sửa" },
+                    { stt: 3, word: "regulation (n)", ipa: "/ˌreɡjuˈleɪʃn/", meaning: "quy định" },
+                    { stt: 4, word: "Past", ipa: "/pæst/", meaning: "quá khứ, qua, trôi qua" },
+                    { stt: 5, word: "submit (v)", ipa: "/səbˈmɪt/", meaning: "nộp" },
+                    { stt: 6, word: "complete (the complete report)", ipa: "/kəmˈpliːt/", meaning: "hoàn thành, hoàn chỉnh, báo cáo hoàn chỉnh" },
+                    { stt: 7, word: "fund (travel funds)", ipa: "/fʌnd/", meaning: "quỹ, quỹ dành cho việc đi lại" },
+                    { stt: 8, word: "significant", ipa: "/sɪɡˈnɪfɪkənt/", meaning: "đáng kể" },
+                    { stt: 9, word: "amount (n)", ipa: "/əˈmaʊnt/", meaning: "số lượng" },
+                    { stt: 10, word: "distance (n)", ipa: "/ˈdɪstəns/", meaning: "khoảng cách" },
+                    { stt: 11, word: "reason (n)", ipa: "/ˈriːzn/", meaning: "lý do" },
+                    { stt: 12, word: "request (n), (v)", ipa: "/rɪˈkwest/", meaning: "yêu cầu" },
+                    { stt: 13, word: "wise (a)", ipa: "/waɪz/", meaning: "khôn ngoan" },
+                    { stt: 14, word: "remedy (n)", ipa: "/ˈremədi/", meaning: "giải pháp" },
+                    { stt: 15, word: "active (keep your account active)", ipa: "/ˈæktɪv/", meaning: "trong trạng thái hoạt động" },
+                    { stt: 16, word: "mark (v)", ipa: "/mɑːrk/", meaning: "đánh dấu" },
+                    { stt: 17, word: "Feature", ipa: "/ˈfiːtʃər/", meaning: "có, tính năng, đặc điểm" },
+                    { stt: 18, word: "effort (n)", ipa: "/ˈefərt/", meaning: "nỗ lực" },
+                    { stt: 19, word: "volunteer", ipa: "/ˌvɑːlənˈtɪr/", meaning: "tình nguyện, tình nguyện viên" },
+                    { stt: 20, word: "versus (prep)", ipa: "/ˈvɜːrsəs/", meaning: "đấu với" },
+                    { stt: 21, word: "employ", ipa: "/ɪmˈplɔɪ/", meaning: "tuyển dụng, việc làm, nhân viên" },
+                    { stt: 22, word: "productivity (n)", ipa: "/ˌproʊdʌkˈtɪvəti/", meaning: "năng suất" },
+                    { stt: 23, word: "mainly (adv)", ipa: "/ˈmeɪnli/", meaning: "chủ yếu" },
+                    { stt: 24, word: "respectively (adv)", ipa: "/rɪˈspektɪvli/", meaning: "tương ứng" },
+                    { stt: 25, word: "noticeably (adv)", ipa: "/ˈnoʊtɪsəbli/", meaning: "đáng chú ý" },
+                    { stt: 26, word: "closely (adv)", ipa: "/ˈkloʊsli/", meaning: "gần, cẩn thận" },
+                    { stt: 27, word: "manuscript (n)", ipa: "/ˈmænjuskrɪpt/", meaning: "bản thảo" },
+                    { stt: 28, word: "once (adv)", ipa: "/wʌns/", meaning: "đã một lần; một khi" },
+                    { stt: 29, word: "either (either...or)", ipa: "/ˈiːðər/", meaning: "một trong hai, hoặc...hoặc" },
+                    { stt: 30, word: "whoever (pron)", ipa: "/huːˈevər/", meaning: "bất cứ ai mà" },
+                    { stt: 31, word: "probably (adv)", ipa: "/ˈprɑːbəbli/", meaning: "có thể" },
+                    { stt: 32, word: "intern (n)", ipa: "/ˈɪntɜːrn/", meaning: "thực tập sinh" },
+                    { stt: 33, word: "takeover (v)", ipa: "/ˈteɪkoʊvər/", meaning: "đảm đương, tiếp quản" },
+                    { stt: 34, word: "rival (n)", ipa: "/ˈraɪvl/", meaning: "đối thủ" },
+                    { stt: 35, word: "chain (rival chain)", ipa: "/tʃeɪn/", meaning: "chuỗi, chuỗi đối thủ cạnh tranh" },
+                    { stt: 36, word: "streamline (v)", ipa: "/ˈstriːmlaɪn/", meaning: "sắp xếp hợp lý" },
+                    { stt: 37, word: "assembly (assembly process)", ipa: "/əˈsembli/", meaning: "lắp ráp, quá trình lắp ráp" },
+                    { stt: 38, word: "track (track the shipment)", ipa: "/træk/", meaning: "theo dõi, theo dõi đơn hàng" },
+                    { stt: 39, word: "strict (a)", ipa: "/strɪkt/", meaning: "nghiêm ngặt" },
+                    { stt: 40, word: "numerous (a)", ipa: "/ˈnuːmərəs/", meaning: "nhiều" },
+                    { stt: 41, word: "Advance (in advance)", ipa: "/ədˈvæns/", meaning: "trước, phát triển, tiền trả trước" },
+                    { stt: 42, word: "crowded (a)", ipa: "/ˈkraʊdɪd/", meaning: "đông đúc" },
+                    { stt: 43, word: "determine (v)", ipa: "/dɪˈtɜːrmɪn/", meaning: "xác định, quyết định" },
+                    { stt: 44, word: "facilities (n)", ipa: "/fəˈsɪlətiz/", meaning: "cơ sở vật chất" },
+                    { stt: 45, word: "janitor (n)", ipa: "/ˈdʒænɪtər/", meaning: "người dọn dẹp" },
+                    { stt: 46, word: "term (n)", ipa: "/tɜːrm/", meaning: "nhiệm kỳ / điều khoản" },
+                    { stt: 47, word: "legislator (n)", ipa: "/ˈledʒɪsleɪtər/", meaning: "nhà lập pháp" },
+                    { stt: 48, word: "infrastructure (n)", ipa: "/ˈɪnfrəstrʌktʃər/", meaning: "cơ sở hạ tầng" },
+                    { stt: 49, word: "potential (a)", ipa: "/pəˈtenʃl/", meaning: "tiềm năng" },
+                    { stt: 50, word: "elect (v)", ipa: "/.../", meaning: "bầu chọn" },
+                    { stt: 51, word: "be eligible for", ipa: "/ˈelɪdʒəbl/", meaning: "đũ điều kiện cho" },
+                    { stt: 52, word: "Associate", ipa: "/əˈsoʊʃieɪt/", meaning: "liên tưởng, cộng sự, liên kết" },
+                    { stt: 53, word: "quantity (n)", ipa: "/ˈkwɑːntəti/", meaning: "số lượng" },
+                    { stt: 54, word: "slightly (adv)", ipa: "/ˈslaɪtli/", meaning: "nhẹ" },
+                    { stt: 55, word: "wholly (adv)", ipa: "/ˈhoʊlli/", meaning: "hoàn toàn" },
+                    { stt: 56, word: "virtuosic (a) / virtuoso (n)", ipa: "/ˌvɜːrtʃuˈoʊsoʊ/", meaning: "điêu luyện / bậc thầy" },
+                    { stt: 57, word: "prior (prior to)", ipa: "/ˈpraɪər/", meaning: "trước, trước khi" }
+                ]
+            },
+            p4: {
+                title: "TEST 4 - Part 6, 7 (Trang 174-177)",
+                words: [
+                    { stt: 1, word: "latest (a)", ipa: "/ˈleɪtɪst/", meaning: "mới nhất, gần đây nhất" },
+                    { stt: 2, word: "experiment (n)", ipa: "/ɪkˈsperɪmənt/", meaning: "thử nghiệm" },
+                    { stt: 3, word: "platform (n)", ipa: "/ˈplætfɔːrm/", meaning: "nền tảng" },
+                    { stt: 4, word: "subscriber (n)", ipa: "/səbˈskraɪbər/", meaning: "người đăng ký" },
+                    { stt: 5, word: "worldwide (adv)", ipa: "/ˌwɜːrldˈwaɪd/", meaning: "trên toàn thế giới" },
+                    { stt: 6, word: "constantly (adv)", ipa: "/ˈkɑːnstəntli/", meaning: "luôn luôn" },
+                    { stt: 7, word: "apparel (n)", ipa: "/əˈpærəl/", meaning: "trang phục" },
+                    { stt: 8, word: "accessory (n)", ipa: "/əkˈsesəri/", meaning: "phụ tùng, phụ kiện" },
+                    { stt: 9, word: "period (periodic)", ipa: "/ˈpɪriəd/", meaning: "giai đoạn, định kỳ" },
+                    { stt: 10, word: "contingent (n)", ipa: "/kənˈtɪndʒənt/", meaning: "nhóm người (có điểm chung)" },
+                    { stt: 11, word: "consent (n)", ipa: "/kənˈsent/", meaning: "sự cho phép" },
+                    { stt: 12, word: "therefore", ipa: "/ˈðerfɔːr/", meaning: "do đó" },
+                    { stt: 13, word: "controversy (controversial)", ipa: "/ˈkɑːntrəvɜːrsi/", meaning: "tranh cãi, gây tranh cãi" },
+                    { stt: 14, word: "evolve (evolution)", ipa: "/ɪˈvɑːlv/", meaning: "tiến hóa, phát triển" },
+                    { stt: 15, word: "Representative", ipa: "/ˌreprɪˈzen.tə.tɪv/", meaning: "mang tính đại diện / người đại diện" },
+                    { stt: 16, word: "privacy (privacy policy)", ipa: "/ˈpraɪvəsi/", meaning: "sự riêng tư, chính sách bảo mật" },
+                    { stt: 17, word: "rate (discounted rate)", ipa: "/reɪt/", meaning: "giá, mức giá chiết khấu" },
+                    { stt: 18, word: "renew (renew your subscription)", ipa: "/rɪˈnuː/", meaning: "gia hạn, làm mới" },
+                    { stt: 19, word: "scratch (n)", ipa: "/skrætʃ/", meaning: "vết trầy xước" },
+                    { stt: 20, word: "crack (n)", ipa: "/kræk/", meaning: "vết nứt" },
+                    { stt: 21, word: "freeze (v)", ipa: "/friːz/", meaning: "đông cứng" },
+                    { stt: 22, word: "crash (n)", ipa: "/kræʃ/", meaning: "tai nạn" },
+                    { stt: 23, word: "expert (n)", ipa: "/ˈekspɜːrt/", meaning: "chuyên gia" },
+                    { stt: 24, word: "brand new", ipa: "", meaning: "hoàn toàn mới" },
+                    { stt: 25, word: "frequent (frequent ink refill)", ipa: "/ˈfriːkwənt/", meaning: "thường xuyên, nạp mực thường xuyên" },
+                    { stt: 26, word: "charge (recharge the battery)", ipa: "/tʃɑːrdʒ/", meaning: "sạc, sạc lại pin" },
+                    { stt: 27, word: "dismiss (v)", ipa: "/dɪsˈmɪs/", meaning: "bỏ đi, sa thải" },
+                    { stt: 28, word: "jump (v)", ipa: "/dʒʌmp/", meaning: "nhảy" },
+                    { stt: 29, word: "grocery store", ipa: "/ˈgroʊsəri stɔːr/", meaning: "cửa hàng tạp hóa" },
+                    { stt: 30, word: "instead (instead of)", ipa: "/ɪnˈted/", meaning: "thay vào đó, thay vì" },
+                    { stt: 31, word: "likewise (adv)", ipa: "/ˈlaɪkwaɪz/", meaning: "tương tự vậy" },
+                    { stt: 32, word: "fabric (n)", ipa: "/ˈfæbrɪk/", meaning: "vải vóc" },
+                    { stt: 33, word: "quest (n)", ipa: "/kwest/", meaning: "nhiệm vụ" },
+                    { stt: 34, word: "fiber (n)", ipa: "/ˈfaɪbər/", meaning: "sợi; chất xơ" },
+                    { stt: 35, word: "discard (v)", ipa: "/dɪˈskɑːrd/", meaning: "vứt bỏ" },
+                    { stt: 36, word: "Leave", ipa: "/liːv/", meaning: "rời khỏi, để lại, sự nghỉ phép" },
+                    { stt: 37, word: "ordinarily (adv)", ipa: "/ˌɔːrdnˈerəli/", meaning: "thông thường" },
+                    { stt: 38, word: "dispose (v)", ipa: "/dɪˈspoʊz/", meaning: "vứt bỏ" },
+                    { stt: 39, word: "harvest (v)", ipa: "/ˈhɑːrvɪst/", meaning: "thu hoạch" },
+                    { stt: 40, word: "landfill (n)", ipa: "/ˈlændfɪl/", meaning: "bãi rác" },
+                    { stt: 41, word: "convert (convert...into...)", ipa: "/kənˈvɜːrt/", meaning: "chuyển đổi" },
+                    { stt: 42, word: "range (a wide range of)", ipa: "/reɪndʒ/", meaning: "phạm vi, nhiều loại đa dạng" },
+                    { stt: 43, word: "expense (n)", ipa: "/ɪkˈspens/", meaning: "chi phí" },
+                    { stt: 44, word: "appearance (n)", ipa: "/əˈpɪrəns/", meaning: "vẻ bề ngoài" },
+                    { stt: 45, word: "thus (adv)", ipa: "/ðʌs/", meaning: "do đó" },
+                    { stt: 46, word: "durable (a)", ipa: "/ˈdʊrəbl/", meaning: "bền" },
+                    { stt: 47, word: "substitute (v)", ipa: "/ˈsʌbstɪtuːt/", meaning: "thay thế" },
+                    { stt: 48, word: "inquiry (n)", ipa: "/ˈɪnkwaɪəri/", meaning: "câu hỏi; sự điều tra" },
+                    { stt: 49, word: "regarding", ipa: "/rɪˈgɑːrdɪŋ/", meaning: "liên quan đến" },
+                    { stt: 50, word: "manufacture (manufacturing cost)", ipa: "/ˌmænjuˈfæktʃər/", meaning: "sản xuất, chi phí sản xuất" },
+                    { stt: 51, word: "transaction (n)", ipa: "/trænˈzækʃn/", meaning: "giao dịch" },
+                    { stt: 52, word: "merchandise (discounted merchandise)", ipa: "/ˈmɜːrtʃəndaɪz/", meaning: "hàng hóa, hàng hóa giảm giá" },
+                    { stt: 53, word: "fuel (n)", ipa: "/ˈfjuːəl/", meaning: "nhiên liệu" },
+                    { stt: 54, word: "multiple (a)", ipa: "/ˈmʌltɪpl/", meaning: "nhiều" },
+                    { stt: 55, word: "technician (n)", ipa: "/tekˈnɪʃn/", meaning: "kỹ thuật viên" },
+                    { stt: 56, word: "musician (experienced musician)", ipa: "/mjuˈzɪʃn/", meaning: "ca sỹ, nhạc sỹ" },
+                    { stt: 57, word: "linen (n)", ipa: "/ˈlɪnɪn/", meaning: "vải lanh" },
+                    { stt: 58, word: "Estimate", ipa: "/ˈestɪmeɪt/", meaning: "ước tính, bản ước tính" },
+                    { stt: 59, word: "verify (v)", ipa: "/ˈverɪfaɪ/", meaning: "xác minh" },
+                    { stt: 60, word: "route (n)", ipa: "/ruːt/", meaning: "tuyến đường, lộ trình" },
+                    { stt: 61, word: "based on", ipa: "", meaning: "dựa vào" },
+                    { stt: 62, word: "propose (propose the new meeting time)", ipa: "/prəˈpoʊz/", meaning: "đề xuất, thời gian họp mới" },
+                    { stt: 63, word: "house (this city houses many headquarters)", ipa: "/haʊz/", meaning: "có, chứa, đặt văn phòng" },
+                    { stt: 64, word: "leadership (n)", ipa: "/ˈliːdərʃɪp/", meaning: "lãnh đạo" },
+                    { stt: 65, word: "dues (membership dues)", ipa: "/duːz/", meaning: "phí, phí thành viên, đến hạn" },
+                    { stt: 66, word: "seek (seek advice)", ipa: "/siːk/", meaning: "tìm kiếm, lời khuyên" },
+                    { stt: 67, word: "landscape (landscaping problem)", ipa: "/ˈlændskeɪp/", meaning: "cảnh quan, vấn đề cảnh quan" },
+                    { stt: 68, word: "commercial (a)", ipa: "/kəˈmɜːrʃl/", meaning: "thuộc về thương mại" },
+                    { stt: 69, word: "residential (a)", ipa: "/ˌrezɪˈdenʃl/", meaning: "thuộc về khu dân cư" },
+                    { stt: 70, word: "touch (v)", ipa: "/tʌtʃ/", meaning: "chạm vào" },
+                    { stt: 71, word: "acquire (v)", ipa: "/əˈkwaɪər/", meaning: "có được, mua được" },
+                    { stt: 72, word: "publicize (v)", ipa: "/ˈpʌblɪsaɪz/", meaning: "công bố" },
+                    { stt: 73, word: "material (promotional materials)", ipa: "/məˈtɪriəl/", meaning: "tài liệu quảng cáo" },
+                    { stt: 74, word: "expertise (considerable expertise)", ipa: "/ˌekspɜːrˈtiːz/", meaning: "chuyên môn tốt" }
+                ]
+            },
+            p5: {
+                title: "TEST 5 - Part 1, 2 (Trang 203-204)",
+                words: [
+                    { stt: 1, word: "sign (read a sign)", ipa: "/saɪn/", meaning: "bảng hiệu/ ký hiệu, đọc bảng hiệu" },
+                    { stt: 2, word: "cart (push a cart)", ipa: "/kɑːrt/", meaning: "xe đẩy, đẩy xe đẩy" },
+                    { stt: 3, word: "suitcase (pull suitcase)", ipa: "/ˈsuːtkeɪs/", meaning: "vali quần áo, kéo vali" },
+                    { stt: 4, word: "bench (n)", ipa: "/bentʃ/", meaning: "ghế dài" },
+                    { stt: 5, word: "rack (n)", ipa: "/ræk/", meaning: "giá treo" },
+                    { stt: 6, word: "wait in line", ipa: "", meaning: "xếp hàng chờ" },
+                    { stt: 7, word: "cushion (n)", ipa: "/ˈkʊʃn/", meaning: "cái đệm" },
+                    { stt: 8, word: "glass (glass door)", ipa: "/ɡlæs/", meaning: "kính, cửa kính" },
+                    { stt: 9, word: "light fixture", ipa: "/laɪt ˈfɪkstʃər/", meaning: "thiết bị chiếu sáng" },
+                    { stt: 10, word: "rug (roll up a rug)", ipa: "/rʌɡ/", meaning: "thảm, cuộn tấm thảm" },
+                    { stt: 11, word: "bush (trim some bushes)", ipa: "/bʊʃ/", meaning: "cây bụi, tỉa vài bụi cây" },
+                    { stt: 12, word: "fold (fold some chairs)", ipa: "/fəʊld/", meaning: "gấp lại, gập vài cái ghế" },
+                    { stt: 13, word: "handle (the handle of shopping cart)", ipa: "/ˈhændl/", meaning: "tay cầm, tay cầm của xe đẩy hàng" },
+                    { stt: 14, word: "cord (n)", ipa: "/kɔːrd/", meaning: "dây điện" },
+                    { stt: 15, word: "outlet (n)", ipa: "/ˈaʊtlet/", meaning: "ổ cắm" },
+                    { stt: 16, word: "plug...into (plug a cord into...)", ipa: "", meaning: "cắm...vào, cắm dây điện vào ổ cắm" },
+                    { stt: 17, word: "backpack (n)", ipa: "/ˈbækpæk/", meaning: "ba lô" },
+                    { stt: 18, word: "lace (tie the laces)", ipa: "/leɪs/", meaning: "dây vải, buộc dây giày" },
+                    { stt: 19, word: "path (hiking on an outdoor path)", ipa: "/pæθ/", meaning: "đường nhỏ, đi bộ trên đường nhỏ ngoài trời" },
+                    { stt: 20, word: "tunnel (walk out of a tunnel)", ipa: "/ˈtʌnl/", meaning: "đường hầm, đi ra khỏi đường hầm" },
+                    { stt: 21, word: "closet (n)", ipa: "/ˈklɑːzɪt/", meaning: "cái tủ" },
+                    { stt: 22, word: "rent (v)", ipa: "/rent/", meaning: "thuê" },
+                    { stt: 23, word: "mural (a)", ipa: "/ˈmjʊrəl/", meaning: "bức tranh tường" },
+                    { stt: 24, word: "ladder (n)", ipa: "/ˈlæđər/", meaning: "cái thang" },
+                    { stt: 25, word: "out of town", ipa: "", meaning: "ngoài thị trấn" },
+                    { stt: 26, word: "publisher (n)", ipa: "/ˈpʌblɪʃər/", meaning: "nhà xuất bản" },
+                    { stt: 27, word: "solution (n)", ipa: "/səˈluːʃn/", meaning: "giải pháp" },
+                    { stt: 28, word: "opening (n)", ipa: "/ˈəʊpənɪŋ/", meaning: "vị trí tuyển dụng / phần mở đầu / việc khai trương" },
+                    { stt: 29, word: "recital (piano recital)", ipa: "/rɪˈsaɪtl/", meaning: "buổi biểu diễn, biểu diễn piano" },
+                    { stt: 30, word: "headset (n)", ipa: "/ˈhedset/", meaning: "tai nghe" },
+                    { stt: 31, word: "lumber (n)", ipa: "/ˈlʌmbər/", meaning: "gỗ" },
+                    { stt: 32, word: "out of stock", ipa: "", meaning: "hết hàng" },
+                    { stt: 33, word: "commute (n)", ipa: "/kəˈmjuːt/", meaning: "hành trình, việc đi lại" }
+                ]
+            },
+            p6: {
+                title: "TEST 5 - Part 3, 4 (Trang 204-206)",
+                words: [
+                    { stt: 34, word: "real estate (real estate agent)", ipa: "/ˈriːəl ɪsteɪt/", meaning: "bất động sản, nhân viên bất động sản" },
+                    { stt: 35, word: "renovate (v)", ipa: "/ˈrenəveɪt/", meaning: "cải tạo, nâng cấp, sửa lại" },
+                    { stt: 36, word: "interior (n)", ipa: "/ɪnˈtɪriər/", meaning: "nội thất, bên trong" },
+                    { stt: 37, word: "furniture (n)", ipa: "/ˈfɜːrnɪtʃər/", meaning: "đồ nội thất" },
+                    { stt: 38, word: "architect (n)", ipa: "/ˈɑːrkɪtekt/", meaning: "kiến trúc sư" },
+                    { stt: 39, word: "landscape architect", ipa: "/ˈlændskeɪp/", meaning: "kiến trúc sư cảnh quan" },
+                    { stt: 40, word: "interior designer", ipa: "/dɪˈzaɪnər/", meaning: "nhà thiết kế nội thất" },
+                    { stt: 41, word: "client (n)", ipa: "/ˈklaɪənt/", meaning: "khách hàng" },
+                    { stt: 42, word: "budget (n)", ipa: "/ˈbʌdʒɪt/", meaning: "ngân sách" },
+                    { stt: 43, word: "over budget", ipa: "", meaning: "vượt quá ngân sách" },
+                    { stt: 44, word: "estimate", ipa: "/ˈestɪmət/", meaning: "bản ước tính, báo giá / ước tính" },
+                    { stt: 45, word: "commercial (a)", ipa: "/kəˈmɜːrʃl/", meaning: "thuộc thương mại" },
+                    { stt: 46, word: "property (n)", ipa: "/ˈprɑːpərti/", meaning: "tài sản, bất động sản" },
+                    { stt: 47, word: "spacious (a)", ipa: "/ˈspeɪʃəs/", meaning: "rộng rãi" },
+                    { stt: 48, word: "remodel (v)", ipa: "/ˌriːˈmɑːdl/", meaning: "tu sửa, làm lại" },
+                    { stt: 49, word: "locate (be conveniently located)", ipa: "/ˈloʊkeɪt/", meaning: "định vị, nằm ở vị trí thuận tiện" },
+                    { stt: 50, word: "downtown", ipa: "/ˌdaʊnˈtaʊn/", meaning: "trung tâm thành phố" },
+                    { stt: 51, word: "suburb (n)", ipa: "/ˈsʌbɜːrb/", meaning: "ngoại ô" },
+                    { stt: 52, word: "neighborhood (n)", ipa: "/ˈneɪbərhʊd/", meaning: "khu vực lân cận, hàng xóm" },
+                    { stt: 53, word: "shipping charge", ipa: "/ˈʃɪpɪŋ tʃɑːrdʒ/", meaning: "phí vận chuyển" },
+                    { stt: 54, word: "refund (n), (v)", ipa: "/ˈriːfʌnd/", meaning: "tiền hoàn lại / hoàn tiền" },
+                    { stt: 55, word: "billing statement", ipa: "/ˈbɪlɪŋ ˈsteɪtmənt/", meaning: "sao kê hóa đơn, tờ khai thanh toán" },
+                    { stt: 56, word: "receipt (n)", ipa: "/rɪˈsiːt/", meaning: "hóa đơn, biên lai" },
+                    { stt: 57, word: "invoice (n)", ipa: "/ˈɪnvɔɪs/", meaning: "hóa đơn (yêu cầu thanh toán)" },
+                    { stt: 58, word: "itinerary (n)", ipa: "/aɪˈtɪnəneri/", meaning: "lịch trình chuyến đi" },
+                    { stt: 59, word: "schedule", ipa: "/ˈskedʒuːl/", meaning: "lịch trình / lên lịch trình" },
+                    { stt: 60, word: "flight (n)", ipa: "/flaɪt/", meaning: "chuyến bay" },
+                    { stt: 61, word: "accommodation (n)", ipa: "/əˌkɑːməˈdeɪʃn/", meaning: "chỗ ở" },
+                    { stt: 62, word: "confirm (v)", ipa: "/kənˈfɜːrm/", meaning: "xác nhận" },
+                    { stt: 63, word: "reservation (n)", ipa: "/ˌrezərˈveɪʃn/", meaning: "sự đặt chỗ trước" },
+                    { stt: 64, word: "cancel (v)", ipa: "/ˈkænsl/", meaning: "hủy bỏ" },
+                    { stt: 65, word: "postpone (v)", ipa: "/pəʊˈspəʊn/", meaning: "trì hoãn" },
+                    { stt: 66, word: "delay", ipa: "/dɪˈleɪ/", meaning: "làm trễ / sự chậm trễ" },
+                    { stt: 67, word: "reschedule (v)", ipa: "/ˌriːˈskedʒuːl/", meaning: "đổi lịch, lên lại lịch" },
+                    { stt: 68, word: "appointment (n)", ipa: "/əˈpɔɪntmənt/", meaning: "cuộc hẹn" },
+                    { stt: 69, word: "representative (n)", ipa: "/ˌreprɪˈzentətɪv/", meaning: "người đại diện" },
+                    { stt: 70, word: "availability (n)", ipa: "/əˌveɪləˈbɪləti/", meaning: "sự sẵn có, thời gian trống" },
+                    { stt: 71, word: "complimentary (a)", ipa: "/ˌkɑːmplɪˈmentri/", meaning: "miễn phí" },
+                    { stt: 72, word: "policy (n)", ipa: "/ˈpɑːləsi/", meaning: "chính sách" },
+                    { stt: 73, word: "inquiry (n)", ipa: "/ˈɪnkwaɪəri/", meaning: "câu hỏi, thắc mắc" },
+                    { stt: 74, word: "staff member (n)", ipa: "/stæf ˈmembər/", meaning: "thành viên nhân viên" },
+                    { stt: 75, word: "available (a)", ipa: "/əˈveɪləbl/", meaning: "có sẵn, rảnh" },
+                    { stt: 76, word: "provide (v)", ipa: "/prəˈvaɪd/", meaning: "cung cấp" },
+                    { stt: 77, word: "assistance (n)", ipa: "/əˈsɪstəns/", meaning: "sự hỗ trợ" },
+                    { stt: 78, word: "contact (v)", ipa: "/ˈkɑːntækt/", meaning: "liên lạc" },
+                    { stt: 79, word: "department (n)", ipa: "/dɪˈpɑːrtmənt/", meaning: "bộ phận, phòng ban" },
+                    { stt: 80, word: "supervisor (n)", ipa: "/ˈsuːpərvaɪzər/", meaning: "người giám sát" },
+                    { stt: 81, word: "urgent (a)", ipa: "/ˈɜːrdʒənt/", meaning: "khẩn cấp" },
+                    { stt: 82, word: "process (v)", ipa: "/ˈprɑːses/", meaning: "xử lý" },
+                    { stt: 83, word: "deadline (n)", ipa: "/ˈdedlaɪn/", meaning: "hạn chót" },
+                    { stt: 84, word: "director (n)", ipa: "/dəˈrektər/", meaning: "giám đốc" },
+                    { stt: 85, word: "laboratory (n)", ipa: "/ˈlæbrətɔːri/", meaning: "phòng thí nghiệm" },
+                    { stt: 86, word: "equipment (n)", ipa: "/ɪˈkwɪpmənt/", meaning: "thiết bị" },
+                    { stt: 87, word: "adjust (v)", ipa: "/əˈdʒʌst/", meaning: "điều chỉnh" },
+                    { stt: 88, word: "safety glasses", ipa: "/ˈseɪfti ˈɡlæsɪz/", meaning: "kính bảo hộ" },
+                    { stt: 89, word: "wear (v)", ipa: "/wer/", meaning: "mặc, đeo, mang" },
+                    { stt: 90, word: "protective clothing", ipa: "/prəˈtektɪv ˈkloʊðɪŋ/", meaning: "quần áo bảo hộ" },
+                    { stt: 91, word: "experiment (n)", ipa: "/ɪkˈsperɪmənt/", meaning: "cuộc thí nghiệm" },
+                    { stt: 92, word: "conduct (v)", ipa: "/kənˈdʌkt/", meaning: "tiến hành, thực hiện" }
+                ]
+            },
+            p7: {
+                title: "TEST 5 - Part 5 (Trang 218-220)",
+                words: [
+                    { stt: 1, word: "upgrade (v)", ipa: "/ˈʌpɡreɪd/", meaning: "nâng cấp" },
+                    { stt: 2, word: "spreadsheet (n)", ipa: "/ˈspredʃiːt/", meaning: "bảng tính" },
+                    { stt: 3, word: "approve (v)", ipa: "/əˈpruːv/", meaning: "phê duyệt" },
+                    { stt: 4, word: "drop (v)", ipa: "/drɑːp/", meaning: "làm rơi, giảm" },
+                    { stt: 5, word: "reach (v)", ipa: "/riːtʃ/", meaning: "đến, đạt được, với lấy" },
+                    { stt: 6, word: "corporate (corporate events)", ipa: "/ˈkɔːrpərət/", meaning: "thuộc về doanh nghiệp, sự kiện doanh nghiệp" },
+                    { stt: 7, word: "various (a)", ipa: "/ˈværiəs/", meaning: "khác nhau" },
+                    { stt: 8, word: "technique (n)", ipa: "/tekˈniːk/", meaning: "kỹ thuật" },
+                    { stt: 9, word: "tile (n)", ipa: "/taɪl/", meaning: "ngói" },
+                    { stt: 10, word: "closure (n)", ipa: "/ˈkloʊʒər/", meaning: "sự đóng cửa" },
+                    { stt: 11, word: "cosmetic (n)", ipa: "/kɑːzˈmetɪk/", meaning: "mỹ phẩm" },
+                    { stt: 12, word: "circumstance (under any circumstances)", ipa: "/ˈsɜːrkəmstæns/", meaning: "hoàn cảnh, dưới bất kỳ hoàn cảnh nào" },
+                    { stt: 13, word: "further (a)", ipa: "/ˈfɜːrðər/", meaning: "nhiều hơn, thêm vào" },
+                    { stt: 14, word: "previous (a)", ipa: "/ˈpriːviəs/", meaning: "trước đây" },
+                    { stt: 15, word: "average (a)", ipa: "/ˈævərɪdʒ/", meaning: "trung bình" },
+                    { stt: 16, word: "stream (v)", ipa: "/striːm/", meaning: "chảy, di chuyển nối đuôi nhau" },
+                    { stt: 17, word: "considerable (a)", ipa: "/kənˈsɪdərəbl/", meaning: "đáng kể" },
+                    { stt: 18, word: "considerate (a)", ipa: "/kənˈsɪdərət/", meaning: "cẩn thận, thận trọng" },
+                    { stt: 19, word: "be suitable for", ipa: "/ˈsuːtəbl/", meaning: "phù hợp cho" },
+                    { stt: 20, word: "permanently (adv)", ipa: "/ˈpɜːrmənəntli/", meaning: "lâu dài" },
+                    { stt: 21, word: "promptly (adv)", ipa: "/ˈpɑːmptli/", meaning: "nhanh chóng, kịp thời" },
+                    { stt: 22, word: "gradually (adv)", ipa: "/ˈɡrædʒuəli/", meaning: "dần dần" },
+                    { stt: 23, word: "space (n)", ipa: "/speɪs/", meaning: "không gian, chỗ trống" },
+                    { stt: 24, word: "differ (A differs from B in...)", ipa: "/ˈdɪfər/", meaning: "khác, A khác B về...." },
+                    { stt: 25, word: "contain (container)", ipa: "/kənˈteɪn/", meaning: "chứa, vật dùng để chứa, đựng thứ khác" },
+                    { stt: 26, word: "match (v)", ipa: "/mætʃ/", meaning: "ghép, phù hợp" },
+                    { stt: 27, word: "satisfy (v)", ipa: "/ˈsætɪsfaɪ/", meaning: "làm thỏa mãn" },
+                    { stt: 28, word: "adjust (v)", ipa: "/əˈdʒʌst/", meaning: "điều chỉnh" },
+                    { stt: 29, word: "custom (n)", ipa: "/ˈkʌstəm/", meaning: "phong tục" },
+                    { stt: 30, word: "deal (n)", ipa: "/diːl/", meaning: "thỏa thuận" },
+                    { stt: 31, word: "influence (v)", ipa: "/ˈ.../", meaning: "ảnh hưởng" },
+                    { stt: 32, word: "prefabricated (a)", ipa: "/ˌpriːˈfæbrɪkeɪtɪd/", meaning: "được làm sẵn" },
+                    { stt: 33, word: "predict (v)", ipa: "/prɪˈdɪkt/", meaning: "dự đoán" },
+                    { stt: 34, word: "retain (v)", ipa: "/rɪˈteɪn/", meaning: "giữ lại" },
+                    { stt: 35, word: "procedure (n)", ipa: "/prəˈsiːdʒər/", meaning: "quy trình" },
+                    { stt: 36, word: "anniversary (n)", ipa: "/ˌænɪˈvɜːrsəri/", meaning: "lễ kỷ niệm" },
+                    { stt: 37, word: "celebrate (v)", ipa: "/ˈselɪbreɪt/", meaning: "tổ chức để chúc mừng" },
+                    { stt: 38, word: "mayor (n)", ipa: "/ˈmeɪər/", meaning: "thị trưởng" },
+                    { stt: 39, word: "quite (adv)", ipa: "/kwaɪt/", meaning: "khá" },
+                    { stt: 40, word: "acquire (v)", ipa: "/əˈkwaɪər/", meaning: "có được, mua được" },
+                    { stt: 41, word: "tote bag", ipa: "/ˈtoʊt bæɡ/", meaning: "túi lớn" },
+                    { stt: 42, word: "donate (v)", ipa: "/ˈdoʊneɪt/", meaning: "quyên tặng" },
+                    { stt: 43, word: "generous (a)", ipa: "/ˈdʒenərəs/", meaning: "rộng lượng, hào phóng" },
+                    { stt: 44, word: "honor (v)", ipa: "/ˈɑːnər/", meaning: "vinh danh" },
+                    { stt: 45, word: "engineer (n)", ipa: "/ˌendʒɪˈnɪr/", meaning: "kỹ sư" },
+                    { stt: 46, word: "reception (n)", ipa: "/rɪˈsepʃn/", meaning: "sự đón tiếp; tiệc chiêu đãi" },
+                    { stt: 47, word: "instrumental (a)", ipa: "/ˌ.../", meaning: "thuộc về công cụ" },
+                    { stt: 48, word: "indeed (adv)", ipa: "/ɪnˈdiːd/", meaning: "thật vậy" },
+                    { stt: 49, word: "avoid (avoidance)", ipa: "/əˈvɔɪd/", meaning: "tránh, sự tránh né" },
+                    { stt: 50, word: "trustee (the board of trustees)", ipa: "/trʌˈstiː/", meaning: "người được ủy thác, hội đồng quản trị" },
+                    { stt: 51, word: "debate (v)", ipa: "/ˈdɪbeɪt/", meaning: "tranh luận" },
+                    { stt: 52, word: "policy (the revised hiring policies)", ipa: "/ˈpɑːləsi/", meaning: "chính sách, tuyển dụng được duyệt lại" },
+                    { stt: 53, word: "Across", ipa: "/əˈkrɔːs/", meaning: "băng qua, đối diện, khắp" },
+                    { stt: 54, word: "closely (adv)", ipa: "/ˈkloʊsli/", meaning: "gần gũi, cẩn thận" },
+                    { stt: 55, word: "instructor (n)", ipa: "/.../", meaning: "người hướng dẫn" },
+                    { stt: 56, word: "proper (a)", ipa: "/ˈpɑːpər/", meaning: "đúng đắn, phù hợp" },
+                    { stt: 57, word: "tend (tend to make mistakes)", ipa: "/tend/", meaning: "có khả năng; có xu hướng gây lỗi" },
+                    { stt: 58, word: "imitate (v)", ipa: "/ˈɪmɪteɪt/", meaning: "bắt chước" },
+                    { stt: 59, word: "move (movement)", ipa: "/muːv/", meaning: "di chuyển, sự di chuyển" }
+                ]
+            },
+            p8: {
+                title: "TEST 5 - Part 6, 7 (Trang 225-227)",
+                words: [
+                    { stt: 1, word: "open position (fill 100 open positions)", ipa: "/ˈəʊpən pəˈzɪʃn/", meaning: "vị trí tuyển dụng, tuyển đủ 100 vị trí" },
+                    { stt: 2, word: "exist (v)", ipa: "/ɪɡˈzɪst/", meaning: "tồn tại" },
+                    { stt: 3, word: "construction (under construction)", ipa: "/kənˈstrʌkʃn/", meaning: "xây dựng, đang thi công" },
+                    { stt: 4, word: "résumé (resume)", ipa: "/reɪˈzuːmeɪ/", meaning: "sơ yếu lý lịch, bắt đầu lại" },
+                    { stt: 5, word: "appointment (n)", ipa: "/əˈpɔɪntmənt/", meaning: "cuộc hẹn / sự bổ nhiệm" },
+                    { stt: 6, word: "manufacture (n) (v)", ipa: "/ˌmænjuˈfæktʃər/", meaning: "sản xuất" },
+                    { stt: 7, word: "political (a)", ipa: "/pəˈlɪtɪkl/", meaning: "thuộc về chính trị" },
+                    { stt: 8, word: "additionally (adv)", ipa: "/əˈdɪʃənəli/", meaning: "thêm vào đó" },
+                    { stt: 9, word: "grand opening", ipa: "", meaning: "lễ khai trương" },
+                    { stt: 10, word: "applicant (n)", ipa: "/ˈæplɪkənt/", meaning: "ứng viên" },
+                    { stt: 11, word: "prior (prior experience)", ipa: "/ˈpraɪər/", meaning: "trước, kinh nghiệm trước đó" },
+                    { stt: 12, word: "analyst (n)", ipa: "/ˈænəlɪst/", meaning: "nhà phân tích" },
+                    { stt: 13, word: "wonderful (wonderful solution)", ipa: "/ˈwʌndərfl/", meaning: "tuyệt vời, giải pháp tuyệt vời" },
+                    { stt: 14, word: "improve (improve the effectiveness)", ipa: "/ɪmˈpruːv/", meaning: "cải thiện, cải thiện hiệu quả" },
+                    { stt: 15, word: "screw (v)", ipa: "/skruː/", meaning: "bắt vít" },
+                    { stt: 16, word: "pitcher (n)", ipa: "/ˈpɪtʃər/", meaning: "cái ấm, ca nước" },
+                    { stt: 17, word: "clog (v)", ipa: "/klɑːɡ/", meaning: "tắc nghẽn" },
+                    { stt: 18, word: "consider (v)", ipa: "/kənˈsɪdər/", meaning: "cân nhắc, xem xét" },
+                    { stt: 19, word: "filter (screw the filter clockwise)", ipa: "/ˈfɪltər/", meaning: "thiết bị lọc, bắt vít theo chiều kim đồng hồ" },
+                    { stt: 20, word: "tank (storage tank)", ipa: "/tæŋ/", meaning: "bình chứa, bể chứa" },
+                    { stt: 21, word: "extremely (adv)", ipa: "/ɪkˈstriːmli/", meaning: "cực kỳ" },
+                    { stt: 22, word: "highly (highly recommended)", ipa: "/ˈhaɪli/", meaning: "rất / cao, rất được đề xuất" },
+                    { stt: 23, word: "tightly (adv)", ipa: "/ˈtaɪtli/", meaning: "chặt" },
+                    { stt: 24, word: "steadily (adv)", ipa: "/ˈstedəli/", meaning: "đều đặn" },
+                    { stt: 25, word: "diminish (v)", ipa: "/dɪˈmɪnɪʃ/", meaning: "giảm bớt" },
+                    { stt: 26, word: "commit (be committed to / commit a crime)", ipa: "/kəˈmɪt/", meaning: "cam kết / vi phạm, tận tâm, phạm tội" },
+                    { stt: 27, word: "outstanding (outstanding service)", ipa: "/aʊtˈstændɪŋ/", meaning: "nổi bật, dịch vụ nổi bật" },
+                    { stt: 28, word: "guarantee (v)", ipa: "/ˌgærənˈtiː/", meaning: "đảm bảo" },
+                    { stt: 29, word: "return", ipa: "/rɪˈtɜːrn/", meaning: "trả lại" },
+                    { stt: 30, word: "authorization (n)", ipa: "/ˌɔːθərəˈzeɪʃn/", meaning: "sự cấp quyền" },
+                    { stt: 31, word: "agent (service agent)", ipa: "/ˈeɪdʒənt/", meaning: "nhân viên, người đại diện, nhân viên dịch vụ" },
+                    { stt: 32, word: "Insert", ipa: "/ɪnˈsɜːrt/", meaning: "chèn vào, phần chèn vào" },
+                    { stt: 33, word: "object (n)", ipa: "/ˈɑːbdʒekt/", meaning: "vật thể / mục tiêu" },
+                    { stt: 34, word: "explanation (n)", ipa: "/ˌekspləˈneɪʃn/", meaning: "sự giải thích" },
+                    { stt: 35, word: "preview (n)", ipa: "/ˈpriːvjuː/", meaning: "sự xem trước" },
+                    { stt: 36, word: "focus on", ipa: "/ˈfəʊkəs/", meaning: "tập trung" },
+                    { stt: 37, word: "measure (safety measure)", ipa: "/ˈmeʒər/", meaning: "giải pháp, giải pháp an toàn" },
+                    { stt: 38, word: "scam (n)", ipa: "/skæm/", meaning: "lừa đảo" },
+                    { stt: 39, word: "cyberattack (n)", ipa: "/ˈsaɪbərə tæk/", meaning: "tấn công mạng" },
+                    { stt: 40, word: "throughout", ipa: "/θruːˈaʊt/", meaning: "xuyên suốt / khắp" },
+                    { stt: 41, word: "arise (when a problem arises)", ipa: "/əˈraɪz/", meaning: "phát sinh, xuất hiện, khi vấn đề phát sinh" },
+                    { stt: 42, word: "accommodate (v)", ipa: "/əˈkɑːmədeɪt/", meaning: "đáp ứng chỗ" },
+                    { stt: 43, word: "conduct (v)", ipa: "/kənˈdʌkt/", meaning: "thực hiện" },
+                    { stt: 44, word: "be able to", ipa: "", meaning: "có thể" },
+                    { stt: 45, word: "take part in", ipa: "", meaning: "tham gia vào" },
+                    { stt: 46, word: "supervisor (n)", ipa: "/ˈsuːpərvaɪzər/", meaning: "người giám sát" },
+                    { stt: 47, word: "otherwise (adv)", ipa: "/ˈʌðərwaɪz/", meaning: "nếu không thì" },
+                    { stt: 48, word: "in that case", ipa: "", meaning: "trong trường hợp đó" },
+                    { stt: 49, word: "household (household item)", ipa: "/ˈhaʊshoʊld/", meaning: "hộ gia định, đồ gia dụng" },
+                    { stt: 50, word: "automobile (automobile accessories)", ipa: "/ˈɔːtəməbiːl/", meaning: "xe ô tô, phụ kiện xe ô tô" },
+                    { stt: 51, word: "yearly (yearly sale)", ipa: "/ˈjɪrli/", meaning: "hàng năm, khuyến mãi hàng năm" },
+                    { stt: 52, word: "acknowledge (v)", ipa: "/əkˈnɑːlɪdʒ/", meaning: "thừa nhận" },
+                    { stt: 53, word: "off-site", ipa: "", meaning: "ngoài cơ sở, ngoài công trường" },
+                    { stt: 54, word: "indicate (v)", ipa: "/ˈɪndɪkeɪt/", meaning: "chỉ ra" },
+                    { stt: 55, word: "article (n)", ipa: "/ˈɑːrtɪkl/", meaning: "bài báo" },
+                    { stt: 56, word: "text-message (n)", ipa: "/ˈtekst ˈmesɪdʒ/", meaning: "tin nhắn văn bản" },
+                    { stt: 57, word: "job posting", ipa: "/dʒɑːb ˈpoʊstɪŋ/", meaning: "bài đăng tuyển dụng" },
+                    { stt: 58, word: "flyer (n)", ipa: "/ˈflyer/", meaning: "tờ rơi" },
+                    { stt: 59, word: "memo (n)", ipa: "/ˈmemoʊ/", meaning: "thông báo nội bộ" }
+                ]
+            },
+            p9: {
+                title: "TEST 6 - LC: Listening comprehension (Part 3,4) (Trang 259-261)",
+                words: [
+                    { stt: 1, word: "renovation (n)", ipa: "/ˌrenəˈveɪʃn/", meaning: "tân trang" },
+                    { stt: 2, word: "overdue (long overdue)", ipa: "//ˌəʊvərˈduː//", meaning: "quá hạn, quá hạn lâu" },
+                    { stt: 3, word: "production (n)", ipa: "/prəˈdʌkʃn/", meaning: "việc sản xuất, sản phẩm (âm nhạc, điện ảnh)" },
+                    { stt: 4, word: "get + O + V3/ed (get the work done)", ipa: "", meaning: "có + cái gì/việc gì, có mọi việc hoàn thành" },
+                    { stt: 5, word: "latest (a)", ipa: "/ˈleɪtɪst/", meaning: "mới nhất" },
+                    { stt: 6, word: "run (have a successful run)", ipa: "/rʌn/", meaning: "màn trình diễn, có màn biểu diễn thành công" },
+                    { stt: 7, word: "fund-raiser (n)", ipa: "/ˈfʌndreɪzər/", meaning: "việc gây quỹ" },
+                    { stt: 8, word: "raise money", ipa: "", meaning: "gây quỹ" },
+                    { stt: 9, word: "lighting (n)", ipa: "/ˈlaɪtɪŋ/", meaning: "việc chiếu sáng" },
+                    { stt: 10, word: "press conference", ipa: "/ˈpres kɑːnfərəns/", meaning: "họp báo" },
+                    { stt: 11, word: "audition (n)", ipa: "/ˈɔːdɪʃn/", meaning: "buổi thử giọng" },
+                    { stt: 12, word: "autograph (autograph session)", ipa: "/ˈɔːtəɡræf/", meaning: "chữ ký người nổi tiếng, buổi ký tặng" },
+                    { stt: 13, word: "customer-care (customer-care position)", ipa: "", meaning: "chăm sóc khách hàng, vị trí chăm sóc" },
+                    { stt: 14, word: "lease (our lease expires next month)", ipa: "/liːs/", meaning: "thuê; hợp đồng thuê, hết hạn vào tháng sau" },
+                    { stt: 15, word: "solar panel", ipa: "/ˌsəʊlər ˈpænl/", meaning: "tấm năng lượng mặt trời" },
+                    { stt: 16, word: "renewable (renewable source)", ipa: "/rɪˈnuːəbl/", meaning: "có thể tái tạo, nguồn có thể tái tạo" },
+                    { stt: 17, word: "agency (rental agency)", ipa: "/ˈeɪdʒənsi/", meaning: "công ty, đại lý, đại lý cho thuê" },
+                    { stt: 18, word: "launch (v)", ipa: "/lɔːntʃ/", meaning: "tung ra, ra mắt" },
+                    { stt: 19, word: "commute (a longer commute)", ipa: "/kəˈmjuːt/", meaning: "hành trình, việc đi lại, hành trình dài hơn" },
+                    { stt: 20, word: "dinosaur (n)", ipa: "/ˈdaɪnəsɔːr/", meaning: "khủng long" },
+                    { stt: 21, word: "pan (dinosaur-shaped pan)", ipa: "/pæn/", meaning: "chảo, chảo hình khủng long" },
+                    { stt: 22, word: "standing cake", ipa: "", meaning: "bánh kem/ sinh nhật đứng" },
+                    { stt: 23, word: "flat (a)", ipa: "/flæt/", meaning: "phẳng" },
+                    { stt: 24, word: "fair (science fair)", ipa: "/fer/", meaning: "hội chợ, hội chợ khoa học" },
+                    { stt: 25, word: "reach (v)", ipa: "/riːtʃ/", meaning: "đến, đạt được" },
+                    { stt: 26, word: "unfortunately (adv)", ipa: "/ʌnˈfɔːrtʃənətli/", meaning: "thật không may" },
+                    { stt: 27, word: "last (v)", ipa: "/læst/", meaning: "kéo dài" },
+                    { stt: 28, word: "walk-in (walk-in appointment)", ipa: "", meaning: "không hẹn trước, cuộc hẹn không cần lịch" },
+                    { stt: 29, word: "incorporated (a)", ipa: "/ɪnˈkɔːrpəreɪtɪd/", meaning: "sát nhập, hợp nhất" },
+                    { stt: 30, word: "claim (claim the discount)", ipa: "/kleɪm/", meaning: "yêu cầu, yêu cầu giảm giá" },
+                    { stt: 31, word: "shortage (staffing shortage)", ipa: "/ˈsɔːrtɪdʒ/", meaning: "sự thiếu hụt, sự thiếu nhân viên" },
+                    { stt: 32, word: "inventory (insufficient inventory)", ipa: "/ˈɪnvəntɔːri/", meaning: "hàng trong kho, hàng trong kho không đủ" },
+                    { stt: 33, word: "initiative (n)", ipa: "/ɪˈniːʃətɪv/", meaning: "sáng kiến" },
+                    { stt: 34, word: "mayor (n)", ipa: "/ˈmeɪər/", meaning: "thị trưởng" },
+                    { stt: 35, word: "integrate (v)", ipa: "/ˈɪntɪɡreɪt/", meaning: "tích hợp" },
+                    { stt: 36, word: "sculpture (n)", ipa: "/ˈskʌlptʃər/", meaning: "tác phẩm điêu khắc" },
+                    { stt: 37, word: "determine (v)", ipa: "/dɪˈtɜːrmɪn/", meaning: "quyết định, xác định" },
+                    { stt: 38, word: "prioritize (v)", ipa: "/praɪˈɔːrətaɪz/", meaning: "ưu tiên" },
+                    { stt: 39, word: "preference (n)", ipa: "/ˈprefrəns/", meaning: "sự yêu thích" },
+                    { stt: 40, word: "diverse (a)", ipa: "/daɪˈvɜːrs/", meaning: "đa dạng" },
+                    { stt: 41, word: "perspective (n)", ipa: "/pərˈspektɪv/", meaning: "quan điểm, cách nhìn nhận" },
+                    { stt: 42, word: "election (n)", ipa: "/ɪˈlekʃn/", meaning: "sự bình chọn" },
+                    { stt: 43, word: "recruit (v)", ipa: "/rɪˈkruːt/", meaning: "tuyển dụng" },
+                    { stt: 44, word: "praise (n)", ipa: "/preɪz/", meaning: "lời khen" },
+                    { stt: 45, word: "box office", ipa: "/ˈbɑːks ɑːfɪs/", meaning: "phòng vé" },
+                    { stt: 46, word: "wait list", ipa: "/ˈweɪt lɪst/", meaning: "danh sách chờ" },
+                    { stt: 47, word: "set aside", ipa: "", meaning: "để qua một bên, để dành" },
+                    { stt: 48, word: "itinerary (n)", ipa: "/aɪˈtɪnəneri/", meaning: "lịch trình" },
+                    { stt: 49, word: "pipe (a water pipe)", ipa: "/paɪp/", meaning: "đường ống, đường ống nước" },
+                    { stt: 50, word: "cannery (n)", ipa: "/ˈkænəri/", meaning: "xưởng đóng hộp" },
+                    { stt: 51, word: "souvenir (n)", ipa: "/ˌsuːvəˈnɪr/", meaning: "đồ lưu niệm" }
+                ]
+            },
+            p10: {
+                title: "TEST 6 - Part 5 (Trang 269-271)",
+                words: [
+                    { stt: 1, word: "working hours", ipa: "", meaning: "giờ làm việc" },
+                    { stt: 2, word: "certain (a)", ipa: "/ˈsɜːrtn/", meaning: "chắc chắn, cụ thể / dưới những điều kiện cụ thể" },
+                    { stt: 3, word: "projection (n)", ipa: "/prəˈdʒekʃn/", meaning: "ước tính (* estimate)" },
+                    { stt: 4, word: "standard (a)", ipa: "/ˈstændərd/", meaning: "tiêu chuẩn / giờ làm việc tiêu chuẩn" },
+                    { stt: 5, word: "heater (n)", ipa: "/ˈhiːtər/", meaning: "lò sưởi / lò sưởi bằng khí propan" },
+                    { stt: 6, word: "switch (v)", ipa: "/swɪtʃ/", meaning: "chuyển / chuyển qua phần mềm mới" },
+                    { stt: 7, word: "publication (n)", ipa: "/ˌpʌblɪˈkeɪʃn/", meaning: "xuất bản / quá trình xuất bản" },
+                    { stt: 8, word: "nominate (v)", ipa: "/ˈnɑːmɪneɪt/", meaning: "bổ nhiệm (* appoint)" },
+                    { stt: 9, word: "executive (a)", ipa: "/ɪɡˈzekjətɪv/", meaning: "thuộc về quản trị/ điều hành / vị trí điều hành cấp cao" },
+                    { stt: 10, word: "boost (v)", ipa: "/buːst/", meaning: "thúc đẩy, làm tăng lên / để thúc đẩy việc ghi danh" },
+                    { stt: 11, word: "kit (n)", ipa: "/kɪt/", meaning: "bộ / một bộ dành cho người mới bắt đầu miễn phí" },
+                    { stt: 12, word: "guarantee (v)", ipa: "/ˌɡærənˈtiː/", meaning: "đảm bảo" },
+                    { stt: 13, word: "neutral (a)", ipa: "/ˈnuːtrəl/", meaning: "trung lập" },
+                    { stt: 14, word: "solve (v)", ipa: "/sɔːlv/", meaning: "giải quyết, xử lý / giải quyết vấn đề" },
+                    { stt: 15, word: "badge (n)", ipa: "/bædʒ/", meaning: "thẻ / thẻ an ninh" },
+                    { stt: 16, word: "visible (a)", ipa: "/ˈvɪzəbl/", meaning: "có thể nhìn thấy" },
+                    { stt: 17, word: "evenly (adv)", ipa: "/ˈiːvnli/", meaning: "bằng nhau, như nhau" },
+                    { stt: 18, word: "secretly (adv)", ipa: "/ˈsiːkrətli/", meaning: "bí mật" },
+                    { stt: 19, word: "inclement (a)", ipa: "/ɪnˈklemənt/", meaning: "không dễ chịu / thời tiết xấu" },
+                    { stt: 20, word: "handler (n)", ipa: "/ˈhændlər/", meaning: "người xử lý / những người đóng gói ở nhà kho" },
+                    { stt: 21, word: "productive (a)", ipa: "/prəˈdʌktɪv/", meaning: "có hiệu quả, có năng suất" },
+                    { stt: 22, word: "adopt (v)", ipa: "/əˈdɑːpt/", meaning: "chấp nhận" },
+                    { stt: 23, word: "reinforce (v)", ipa: "/ˌriːɪnˈfɔːrs/", meaning: "củng cố" },
+                    { stt: 24, word: "motivate (v)", ipa: "/ˈmoʊtɪveɪt/", meaning: "thúc đẩy, tạo động lực" },
+                    { stt: 25, word: "exclusively (adv)", ipa: "/ɪkˈskluːsɪvli/", meaning: "độc quyền" },
+                    { stt: 26, word: "commercial (a)", ipa: "/kəˈmɜːrʃl/", meaning: "thuộc về thương mại" },
+                    { stt: 27, word: "treasurer (n)", ipa: "/ˈtreʒərər/", meaning: "thủ quỹ" },
+                    { stt: 28, word: "resign (v)", ipa: "/rɪˈzaɪn/", meaning: "từ chức" },
+                    { stt: 29, word: "pick up", ipa: "/pɪk ʌp/", meaning: "cải thiện (* improve)" },
+                    { stt: 30, word: "apart (adv)", ipa: "/əˈpɑːrt/", meaning: "cách ra" },
+                    { stt: 31, word: "over (prep)", ipa: "/ˈoʊvər/", meaning: "quá (* more than)" },
+                    { stt: 32, word: "remain", ipa: "/rɪˈmeɪn/", meaning: "giữ nguyên, duy trì / giữ nguyên đầy đủ chức năng" },
+                    { stt: 33, word: "almost (adv)", ipa: "/ˈɔːlmoʊst/", meaning: "hầu hết (* nearly)" },
+                    { stt: 34, word: "routinely (adv)", ipa: "/ruːˈtiːnli/", meaning: "thường xuyên" },
+                    { stt: 35, word: "openly (adv)", ipa: "/ˈoʊpənli/", meaning: "cởi mở, công khai" },
+                    { stt: 36, word: "extend (v)", ipa: "/ɪkˈstend/", meaning: "gia hạn, mở rộng / bảo hành được gia hạn" },
+                    { stt: 37, word: "assign (v)", ipa: "", meaning: "phân công" },
+                    { stt: 38, word: "address (v)", ipa: "/əˈdres/", meaning: "giải quyết / xử lý câu hỏi" },
+                    { stt: 39, word: "explore (v)", ipa: "/ɪkˈsplɔːr/", meaning: "phân tích (* analyse)" },
+                    { stt: 40, word: "supervisor (n)", ipa: "/ˈsuːpərvaɪzər/", meaning: "người giám sát" },
+                    { stt: 41, word: "suggestion (n)", ipa: "/səˈdʒestʃən/", meaning: "sự đề xuất" },
+                    { stt: 42, word: "committee (n)", ipa: "/kəˈmɪti/", meaning: "ủy ban" },
+                    { stt: 43, word: "in case", ipa: "", meaning: "phòng khi / trong trường hợp" },
+                    { stt: 44, word: "payment (n)", ipa: "/ˈpeɪmənt/", meaning: "khoản thanh toán / tiến hành thanh toán tiền thuê nhà" },
+                    { stt: 45, word: "impact (n)", ipa: "/ˈɪmpækt/", meaning: "tác động" },
+                    { stt: 46, word: "biography (n)", ipa: "/baɪˈɑːɡrəfi/", meaning: "tiểu sử" },
+                    { stt: 47, word: "besides", ipa: "/bɪˈsaɪdz/", meaning: "ngoài / ngoài ra" },
+                    { stt: 48, word: "somewhat (adv)", ipa: "/ˈsʌmhwʌt/", meaning: "khá (* somehow: bằng cách nào đó)" },
+                    { stt: 49, word: "regulation", ipa: "/ˌreɡjuˈleɪʃn/", meaning: "quy định / quy định về thực phẩm" },
+                    { stt: 50, word: "consume (v)", ipa: "/kənˈsuːm/", meaning: "tiêu thụ / sự tiêu thụ (n)" },
+                    { stt: 51, word: "undercook (v)", ipa: "/ˌʌndərˈkʊk/", meaning: "chưa nấu chín / thịt chưa nấu chín" },
+                    { stt: 52, word: "minus (prep)", ipa: "/ˈmaɪnəs/", meaning: "trừ" },
+                    { stt: 53, word: "frame (n)", ipa: "/freɪm/", meaning: "khung / gọng kính" },
+                    { stt: 54, word: "sight (n)", ipa: "/saɪt/", meaning: "tầm nhìn" },
+                    { stt: 55, word: "shape (n)", ipa: "/ʃeɪp/", meaning: "hình dạng" },
+                    { stt: 56, word: "portion (n)", ipa: "/ˈpɔːrʃn/", meaning: "phần" },
+                    { stt: 57, word: "allocate (v)", ipa: "/ˈæləkeɪt/", meaning: "chỉ định, phân bổ" },
+                    { stt: 58, word: "imprint (v)", ipa: "/ɪmˈprɪnt/", meaning: "ghi dấu ấn" },
+                    { stt: 59, word: "economize (v)", ipa: "/.../", meaning: "chi tiêu ít hơn" },
+                    { stt: 60, word: "rationalize (v)", ipa: "/ˈræʃnəlaɪz/", meaning: "hợp lý hóa" }
+                ]
+            },
+            p11: {
+                title: "TEST 6 - Part 6, 7 (Trang 276-278)",
+                words: [
+                    { stt: 1, word: "craft (v)", ipa: "/kræft/", meaning: "làm, chế tác (đặc biệt là bằng tay)" },
+                    { stt: 2, word: "qualified", ipa: "/ˈkwɑːlɪfaɪd/", meaning: "đủ trình độ chuyên môn / người hướng dẫn chuyên môn cao" },
+                    { stt: 3, word: "tailor (v)", ipa: "/ˈteɪlər/", meaning: "điều chỉnh cho phù hợp" },
+                    { stt: 4, word: "customize (v)", ipa: "/ˈkʌstəmaɪz/", meaning: "điều chỉnh" },
+                    { stt: 5, word: "overcome (v)", ipa: "/ˌoʊvərˈkʌm/", meaning: "vượt qua" },
+                    { stt: 6, word: "discourage (v)", ipa: "/dɪˈskʌrɪdʒ/", meaning: "ngăn chặn; làm nản lòng" },
+                    { stt: 7, word: "express (v)", ipa: "/ɪkˈspres/", meaning: "bày tỏ" },
+                    { stt: 8, word: "beyond (prep)", ipa: "/bɪˈjɑːnd/", meaning: "vượt quá" },
+                    { stt: 9, word: "identity (n)", ipa: "/aɪˈdentəti/", meaning: "danh tính" },
+                    { stt: 10, word: "match (v)", ipa: "/mætʃ/", meaning: "ghép với, làm cho phù hợp với" },
+                    { stt: 11, word: "likely (adj)", ipa: "/ˈlaɪkli/", meaning: "có khả năng / có khả năng xảy ra" },
+                    { stt: 12, word: "perform (v)", ipa: "/pərˈfɔːrm/", meaning: "thực hiện, trình diễn" },
+                    { stt: 13, word: "expert (n)", ipa: "/ˈekspɜːrt/", meaning: "chuyên gia" },
+                    { stt: 14, word: "progress (n)", ipa: "/ˈtrɑːgrəs/", meaning: "sự tiến triển, quá trình / hướng dẫn sự tiến triển" },
+                    { stt: 15, word: "master (v)", ipa: "/ˈmæstər/", meaning: "tinh thông" },
+                    { stt: 16, word: "approximately (adv)", ipa: "/əˈprɑːksɪmətli/", meaning: "xấp xỉ / xấp xỉ 1 tuần" },
+                    { stt: 17, word: "upon (prep)", ipa: "/əˈpɑːn/", meaning: "trên; khi / theo hoặc khi yêu cầu" },
+                    { stt: 18, word: "residence (n)", ipa: "/ˈrezɪdəns/", meaning: "nhà ở, sự định cư" },
+                    { stt: 19, word: "in the meantime", ipa: "", meaning: "trong lúc đó" },
+                    { stt: 20, word: "refinish (v)", ipa: "/ˌriːˈfɪnɪʃ/", meaning: "hoàn thiện lại" },
+                    { stt: 21, word: "furnish (v)", ipa: "/ˈfɜːrnɪʃ/", meaning: "trang trí nội thất / một căn hộ có nội thất" },
+                    { stt: 22, word: "subscription (n)", ipa: "/səbˈskrɪpʃn/", meaning: "sự đặt mua dài hạn" },
+                    { stt: 23, word: "consider (v)", ipa: "/kənˈsɪdər/", meaning: "cân nhắc, xem xét / xét về / xem N1 như N2" },
+                    { stt: 24, word: "rate (n)", ipa: "/reɪt/", meaning: "giá cả / ở mức giá theo năm" },
+                    { stt: 25, word: "timely (adj)", ipa: "/ˈtaɪmli/", meaning: "đúng thời gian" },
+                    { stt: 26, word: "reminder (n)", ipa: "/rɪˈmaɪndər/", meaning: "lời nhắc nhở / lời nhắc thanh toán" },
+                    { stt: 27, word: "distributor (n)", ipa: "/dɪˈstrɪbjətər/", meaning: "nhà phân phối" },
+                    { stt: 28, word: "thermometer (n)", ipa: "/θərˈmɑːmɪtər/", meaning: "nhiệt kế" },
+                    { stt: 29, word: "bacteria (n)", ipa: "/bækˈtɪriə/", meaning: "vi khuẩn" },
+                    { stt: 30, word: "be responsible for", ipa: "/rɪˈspɑːnsəbl/", meaning: "chịu trách nhiệm" },
+                    { stt: 31, word: "ensure (v)", ipa: "/ɪnˈʃʊr/", meaning: "đảm bảo (* assure)" },
+                    { stt: 32, word: "comply with", ipa: "/kəmˈplaɪ/", meaning: "tuân thủ / sự tuân thủ (n)" },
+                    { stt: 33, word: "appropriate (a)", ipa: "/əˈproʊpriət/", meaning: "thích hợp, phù hợp" },
+                    { stt: 34, word: "reliability (a)", ipa: "/rɪˌlaɪəˈbɪləti/", meaning: "đáng tin cậy (Sự đáng tin cậy)" },
+                    { stt: 35, word: "typically (adv)", ipa: "/ˈtɪpɪkli/", meaning: "thường, đặc thù" },
+                    { stt: 36, word: "speed (n)", ipa: "/spiːd/", meaning: "tốc độ / tốc độ internet" },
+                    { stt: 37, word: "competitor (n)", ipa: "/kəmˈpetɪtər/", meaning: "đối thủ cạnh tranh" },
+                    { stt: 38, word: "verify (v)", ipa: "/ˈverɪfaɪ/", meaning: "xác minh / sự xác minh (n)" },
+                    { stt: 39, word: "complex (a)", ipa: "/kəmˈpleks/", meaning: "phức tạp / mật khẩu phức tạp" },
+                    { stt: 40, word: "install (v)", ipa: "/ɪnˈstɔːl/", meaning: "lắp đặt / việc lắp đặt cửa sổ" },
+                    { stt: 41, word: "clean-up (n)", ipa: "/ˈkliːn ʌp/", meaning: "việc dọn vệ sinh / dọn vệ sinh nhà ở" },
+                    { stt: 42, word: "wall-to-wall (a)", ipa: "/ˌwɔːl tə ˈwɔːl/", meaning: "phủ kín sàn/ phòng / trải thảm sàn" },
+                    { stt: 43, word: "access (n)", ipa: "/ˈækses/", meaning: "việc truy cập, lối vào / truy cập internet" },
+                    { stt: 44, word: "agreement (n)", ipa: "/əˈɡriːmənt/", meaning: "thỏa thuận, hợp đồng / hợp đồng thuê" },
+                    { stt: 45, word: "proof (n)", ipa: "/pruːf/", meaning: "bằng chứng / nộp bằng chứng thu nhập" },
+                    { stt: 46, word: "administrator (n)", ipa: "/ədˈmɪnɪstreɪtər/", meaning: "nhân viên quản lý hành chính / quản lý văn phòng" },
+                    { stt: 47, word: "graduate (n)", ipa: "/ˈɡrædʒuət/", meaning: "sinh viên mới tốt nghiệp / tốt nghiệp gần đây" },
+                    { stt: 48, word: "describe (v)", ipa: "/dɪˈskraɪb/", meaning: "mô tả" },
+                    { stt: 49, word: "occur (v)", ipa: "/əˈkɜːr/", meaning: "xuất hiện" },
+                    { stt: 50, word: "free of charge", ipa: "", meaning: "miễn phí (* complimentary)" },
+                    { stt: 51, word: "desirable (a)", ipa: "/dɪˈzaɪərəbl/", meaning: "mong muốn có / một loạt tính năng mong muốn" },
+                    { stt: 52, word: "membership (n)", ipa: "/ˈmembərʃɪp/", meaning: "tư cách thành viên / phí thành viên thấp" },
+                    { stt: 53, word: "prospective (a)", ipa: "/prəˈspektɪv/", meaning: "tiềm năng (* potential) / cư dân tiềm năng" },
+                    { stt: 54, word: "acknowledge (v)", ipa: "/əkˈnɑːlɪdʒ/", meaning: "xác nhận, thừa nhận / xác nhận nhận bản ước tính" }
+                ]
+            }
+        };
+
+        let currentMode = 'list';
+        let currentPart = 'all';
+        let currentWordsActive = [];
+        let cardIndex = 0;
+        let currentQuizCorrectAnswer = "";
+
+        window.onload = function() {
+            renderListView();
+            updateActiveWords();
+        };
+
+        function renderListView() {
+            const container = document.getElementById('list-container');
+            container.innerHTML = '';
+
+            for (let partKey in dataset) {
+                if (currentPart !== 'all' && currentPart !== partKey) continue;
+
+                const partData = dataset[partKey];
+                const section = document.createElement('div');
+                section.className = `part-section js-part-sec-${partKey}`;
+                
+                let tableRows = '';
+                partData.words.forEach(w => {
+                    tableRows += `
+                        <tr class="vocab-row">
+                            <td style="width: 60px; text-align:center; font-weight:bold;">${w.stt}</td>
+                            <td class="td-word">${w.word}</td>
+                            <td style="color: #64748b; font-style:italic;">${w.ipa}</td>
+                            <td>${w.meaning}</td>
+                        </tr>
+                    `;
+                });
+
+                section.innerHTML = `
+                    <div class="part-header">${partData.title} (${partData.words.length} từ)</div>
+                    <table class="vocab-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align:center;">STT</th>
+                                <th>Từ vựng</th>
+                                <th>Phiên âm</th>
+                                <th>Nghĩa tiếng Việt & Mở rộng</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                `;
+                container.appendChild(section);
+            }
+        }
+
+        function updateActiveWords() {
+            if (currentPart === 'all') {
+                currentWordsActive = [];
+                for (let partKey in dataset) {
+                    currentWordsActive = currentWordsActive.concat(dataset[partKey].words);
+                }
+            } else {
+                currentWordsActive = dataset[currentPart].words;
+            }
+            cardIndex = 0;
+            updateFlashcard();
+        }
+
+        function changePart() {
+            currentPart = document.getElementById('part-selector').value;
+            renderListView();
+            updateActiveWords();
+            if (currentMode === 'quiz') generateQuiz();
+            document.getElementById('search-input').value = '';
+        }
+
+        function setViewMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-buttons button').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('list-container').style.display = 'none';
+            document.getElementById('card-container').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'none';
+
+            if (mode === 'list') {
+                document.getElementById('btn-list').classList.add('active');
+                document.getElementById('list-container').style.display = 'block';
+                renderListView();
+            } else if (mode === 'card') {
+                document.getElementById('btn-card').classList.add('active');
+                document.getElementById('card-container').style.display = 'flex';
+                updateFlashcard();
+            } else if (mode === 'quiz') {
+                document.getElementById('btn-quiz').classList.add('active');
+                document.getElementById('quiz-container').style.display = 'block';
+                generateQuiz();
+            }
+        }
+
+        function updateFlashcard() {
+            if (currentWordsActive.length === 0) return;
+            const card = currentWordsActive[cardIndex];
+            document.querySelector('.flashcard').classList.remove('flipped');
+            
+            setTimeout(() => {
+                document.getElementById('fc-word').innerText = card.word;
+                document.getElementById('fc-ipa').innerText = card.ipa || '—';
+                document.getElementById('fc-meaning').innerText = card.meaning;
+                document.getElementById('card-index').innerText = `${cardIndex + 1} / ${currentWordsActive.length}`;
+            }, 150);
+        }
+
+        function moveCard(step) {
+            cardIndex += step;
+            if (cardIndex < 0) cardIndex = currentWordsActive.length - 1;
+            if (cardIndex >= currentWordsActive.length) cardIndex = 0;
+            updateFlashcard();
+        }
+
+        function generateQuiz() {
+            if (currentWordsActive.length < 4) {
+                document.getElementById('q-text').innerText = "Vui lòng chọn cấu phần có ít nhất 4 từ vựng để tạo bài trắc nghiệm!";
+                document.getElementById('q-options').innerHTML = '';
+                return;
+            }
+
+            const correctWordIndex = Math.floor(Math.random() * currentWordsActive.length);
+            const target = currentWordsActive[correctWordIndex];
+            currentQuizCorrectAnswer = target.meaning;
+
+            document.getElementById('q-text').innerText = `Từ "${target.word}" ${target.ipa ? target.ipa : ''} có nghĩa là gì?`;
+
+            let options = [target.meaning];
+            while (options.length < 4) {
+                const randIndex = Math.floor(Math.random() * currentWordsActive.length);
+                const randMeaning = currentWordsActive[randIndex].meaning;
+                if (!options.includes(randMeaning)) {
+                    options.push(randMeaning);
+                }
+            }
+
+            options.sort(() => Math.random() - 0.5);
+
+            const optionsContainer = document.getElementById('q-options');
+            optionsContainer.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = function() { checkQuizAnswer(this, opt); };
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function checkQuizAnswer(selectedBtn, answer) {
+            const allButtons = document.querySelectorAll('.option-btn');
+            allButtons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.innerText === currentQuizCorrectAnswer) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            if (answer !== currentQuizCorrectAnswer) {
+                selectedBtn.classList.add('wrong');
+            }
+        }
+
+        function filterVocabulary() {
+            const query = document.getElementById('search-input').value.toLowerCase().trim();
+            const rows = document.querySelectorAll('.vocab-row');
+
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                if (text.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            for (let partKey in dataset) {
+                const section = document.querySelector(`.js-part-sec-${partKey}`);
+                if (!section) continue;
+                const activeRows = section.querySelectorAll('.vocab-row:not([style*="display: none"])');
+                if (activeRows.length === 0 && query !== '') {
+                    section.style.display = 'none';
+                } else {
+                    section.style.display = 'block';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
